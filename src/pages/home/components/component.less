@@ -1,0 +1,34 @@
+.commonQa, .myFavorite, .correlationCase {
+  border-bottom: 1px solid #E6E6E6;
+  padding: 0px 10px;
+  .dataList {
+    padding: 0px 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    .dataItem {
+      width: 100%;
+      margin: 3px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      color: #666666;
+      font-size: 14px;
+      .ind {
+        width: 15px;
+        margin-right: 10px;
+      }
+      .info {
+        flex: 1
+      }
+    }
+    .dataItem:hover {
+      color: #3296FA;
+    }
+  }
+  .ant-pagination {
+    margin: 10px 0 20px 0;
+  }
+}

@@ -1,0 +1,64 @@
+.ant-layout-header {
+  height: 60px;
+}
+.header-box {
+  background-color:#116DE9;
+  .logoBox {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .logo {
+      width: 90px;
+      height: 28px;
+      background-image: url('../../assets/images/logo.png');
+      background-size: 100% 100%;
+    }
+    .line {
+      height: 20px;
+      margin: 0px 10px;
+      border-left: 1px solid #FFFFFF;
+    }
+    .text {
+      font-size: 16px;
+      color: #FFFFFF;
+    }
+  }
+  .header-content {
+    width: 1300px;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-items: flex-start;
+    align-items: center;
+  }
+}
+.site-layout {
+  margin: 60px auto 0px auto;
+  width: 1300px;
+  background: #fff;
+  min-height: calc(100vh - 132px);
+}
+
+.top-menu {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  .person-box {
+    height: 100%;
+    width: 470px;
+    position: absolute;
+    right: -200px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-image: url('../../assets/images/robot-bg.png');
+    background-size: 100% 100%;
+  }
+}
+
+[data-theme="dark"] .site-layout-content {
+  background: #141414;
+}
+[data-theme="dark"] .logo {
+  background: rgba(255,255,255,0.3);
+}
