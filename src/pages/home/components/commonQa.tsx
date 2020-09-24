@@ -87,7 +87,6 @@ class CommonQa extends Component {
         pageIndex: this.state.pageIndex
       }
     }).then((res: any) => {
-      console.log('res :>> ', res);
       this.setState({
         qaList: res.qaList,
         total: res.total
@@ -100,7 +99,6 @@ class CommonQa extends Component {
     })
   }
   itemClick(v: any) {
-    console.log('v :>> ', v);
   }
   pageChange(v: number) {
     this.setState({

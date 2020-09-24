@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 封装的请求
  * @Date: 2020-09-21 11:16:42
- * @LastEditTime: 2020-09-21 12:29:13
+ * @LastEditTime: 2020-09-24 19:18:38
  * @LastEditors: 蒋承志
  */
 import { extend, RequestOptionsInit } from 'umi-request';
@@ -43,7 +43,6 @@ const errorHandler = (error: any)  => {
   const { response } = error
   if( response ) {
     const { status, url } = response
-    console.log(status,"status")
     if( status > 400 ) {
       notification.error({
         message: error.data.message ? error.data.message : error.data,
@@ -86,8 +85,6 @@ request.interceptors.response.use(async (response: any) => {
   // console.log('response拦截器')
  const data = await response.clone().json()
   if(response.status === 200) {
-    console.log('response', response);
-    console.log('data', data);
     if(data.code !== '1000') {
       notification.error({
         message: '操作失败',

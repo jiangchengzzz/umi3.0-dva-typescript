@@ -58,7 +58,6 @@ class FavoriteQa extends Component {
     })
   }
   itemClick(v: any) {
-    console.log('v :>> ', v);
   }
   pageChange(v: number) {
     this.setState({

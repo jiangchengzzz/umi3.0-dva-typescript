@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 问答内容
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-23 14:57:05
+ * @LastEditTime: 2020-09-24 19:16:23
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
@@ -24,14 +24,12 @@ class QaContent extends Component<QaContentProps> {
     labelList: []
   }
   componentDidMount() {
-    console.log('this.props :>> ', this.props.actQaType);
     this.initEditor()
     this.getLabel();
     this.getQaChatList()
   }
   componentWillReceiveProps(nextProps: any) {
     if (nextProps.actQaType !== this.props.actQaType) {
-      console.log('nextProps.actQaType :>> ', nextProps.actQaType);
       editor.txt.html('');
       this.getLabel();
     }
@@ -59,7 +57,6 @@ class QaContent extends Component<QaContentProps> {
     editor = new E(elemMenu,elemBody)
     // 使用 onchange 函数监听内容的变化，并实时更新到 state 中
     editor.customConfig.onchange = (html: any) => {
-      console.log(editor.txt.text());
       this.setState({
         // editorContent: editor.txt.text()
         editorContent: editor.txt.html()
@@ -76,7 +73,6 @@ class QaContent extends Component<QaContentProps> {
     // }
     editor.customConfig.onchange = function (html: any) {
       // html 即变化之后的内容
-      console.log('1234234 :>> ', html);
     }
     editor.customConfig.uploadImgShowBase64 = true;
     editor.create();
@@ -98,7 +94,6 @@ class QaContent extends Component<QaContentProps> {
     console.log('labelId :>> ', labelId);
   }
   closeChat() {
-    console.log('关闭 :>> ');
   }
   submit() {
     console.log('editor.txt.text() :>> ', editor.txt.text());

@@ -57,7 +57,6 @@ class Home extends Component {
   }
   componentWillMount() {
     // 组件挂载到DOM前调用
-    console.log('12312313123123123 :>> ', 12312313123123123);
   }
   tabChange(v: string){
     this.setState({

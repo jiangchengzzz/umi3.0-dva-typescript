@@ -3,9 +3,15 @@ import './index.less';
 import { Layout, Menu } from 'antd';
 import { Link } from 'umi'
 import LoginModel from '../../components/loginModel/index'
+import LoginModelTest from '../../components/loginModelTest/index'
+import { connect, Dispatch, LoginModelState } from 'umi'
 
 const { Header, Content, Footer } = Layout;
-class BasicLayout extends Component {
+interface LayoutProps{
+  Login: LoginModelState
+  dispatch: Dispatch;
+}
+class BasicLayout extends Component<LayoutProps> {
   state = {
     loginVisible: false,
     menuList: [
@@ -18,6 +24,15 @@ class BasicLayout extends Component {
         num: 1,
       },
     ]
+  }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'Login/changeVisble',
+      payload: {
+        modelVisble: true,
+        name: 'jiangjiangn'
+      }
+    })
   }
   handleClickMenu = (e: any) => {
     console.log('e :>>111 ', e);
@@ -52,6 +67,7 @@ class BasicLayout extends Component {
             </div>
           </div>
           <LoginModel />
+          <LoginModelTest />
         </Header>
         <Content className="site-layout">
           {this.props.children}
@@ -62,4 +78,4 @@ class BasicLayout extends Component {
   }
 }
 
-export default BasicLayout;
+export default connect(Login=>Login)(BasicLayout);

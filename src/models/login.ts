@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-23 17:39:10
- * @LastEditTime: 2020-09-23 17:48:14
+ * @LastEditTime: 2020-09-24 19:17:38
  * @LastEditors: 蒋承志
  */
 import { Effect, ImmerReducer, Reducer, Subscription } from 'umi';
@@ -20,7 +20,7 @@ export interface LoginModelType {
   reducers: {
     // save: Reducer<LoginModelState>;
     // 启用 immer 之后
-    save: ImmerReducer<LoginModelState>;
+    changeVisble: ImmerReducer<LoginModelState>;
   };
   subscriptions: { setup: Subscription };
 }
@@ -35,16 +35,9 @@ const LoginModel: LoginModelType = {
     },
   },
   reducers: {
-    // save(state, action) {
-    //   return {
-    //     ...state,
-    //     ...action.payload,
-    //   };
-    // },
-    // 启用 immer 之后
-    save(state, action) {
-      state.name = action.payload.name;
-    }
+    changeVisble(state,{payload}){
+			return {...state,...payload}
+		}
   },
   subscriptions: {
     setup({ dispatch, history }) {
