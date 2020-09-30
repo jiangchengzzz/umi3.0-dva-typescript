@@ -7,56 +7,75 @@ import CommonQa from './components/commonQa';
 import CorrelationCase from './components/correlationCase';
 import FavoriteQa from './components/favoriteQa';
 import QaContent from './components/qaContent';
+import { LoginModelState, connect, Dispatch } from 'umi'
 
 const { TabPane } = Tabs;
 
-class Home extends Component {
-  constructor(props: any){
+interface HomeProps{
+  Login: LoginModelState,
+  dispatch: Dispatch
+}
+
+class Home extends Component<HomeProps> {
+  constructor(props: HomeProps){
     super(props)
   }
   state = {
     typeList: [
       {
         name: '全部',
-        typeId: '1',
+        typeId: '99999',
         active: true
       },
       {
         name: '办税事项',
-        typeId: '2',
+        typeId: '0',
         active: false
       },
       {
         name: '办税表单',
         active: false,
-        typeId: '3'
+        typeId: '1'
       },
       {
         name: '办事指引',
-        typeId: '4',
+        typeId: '2',
         active: false
       },
       {
         name: '法规依据',
-        typeId: '5',
+        typeId: '3',
         active: false
       },
       {
         name: '电子税悟局操作指引',
-        typeId: '6',
+        typeId: '4',
         active: false
       },
       {
         name: '其他',
-        typeId: '7',
+        typeId: '5',
         active: false
       }
     ],
     actQaType: '1',
-    actTabs: '1'
+    actTabs: '1',
+    isLogin: false,
+    qaInfo: {
+      docId: '',
+      docType: ''
+    }
   }
   componentWillMount() {
     // 组件挂载到DOM前调用
+    console.log('this.props.login :>> ', this.props.Login);
+  }
+  componentWillReceiveProps(nextProps: any) {
+    if (nextProps.Login.isLogin !== this.props.Login.isLogin) {
+      this.setState({
+        isLogin: nextProps.Login.isLogin
+      })
+    }
   }
   tabChange(v: string){
     this.setState({
@@ -77,11 +96,19 @@ class Home extends Component {
       actQaType: type
     })
   }
+  getQa(v: any) {
+    this.setState({
+      qaInfo: {
+        docId: v.docId,
+        docType: v.docType
+      }
+    })
+  }
   entranceClick(type: string) {
     switch (type) {
       case '1':
         console.log(1)
-        // window.open()
+        // window.open('')
         break;
       case '2':
         console.log(2)
@@ -98,10 +125,10 @@ class Home extends Component {
       case '6':
         console.log(6)
       break;
-
       default:
         break;
     }
+    console.log('this.props :>> ', this.props);
   }
   render() {
     const { typeList, actTabs, actQaType } = this.state;
@@ -133,7 +160,7 @@ class Home extends Component {
           </div>
         </div>
         <div className="qaContentBox">
-          <QaContent actQaType={actQaType} />
+          <QaContent actQaType={actQaType} qaInfo={this.state.qaInfo} loginState={this.props.Login.isLogin} />
         </div>
         <div className="qaOther">
           <div className="recommend">
@@ -148,19 +175,23 @@ class Home extends Component {
               }
               key="1"
             >
-              <CommonQa />
+              <CommonQa getQa={this.getQa.bind(this)} />
             </TabPane>
-            <TabPane
-              tab={
-                <div className={actTabs === '2' ? 'tab-2 active' :'tab-2'}>
-                  <div></div>
-                  我的收藏
-                </div>
-              }
-              key="2"
-            >
-              <FavoriteQa />
-            </TabPane>
+            {
+              this.props.Login.isLogin ?
+              <TabPane
+                tab={
+                  <div className={actTabs === '2' ? 'tab-2 active' :'tab-2'}>
+                    <div></div>
+                    我的收藏
+                  </div>
+                }
+                key="2"
+              >
+                <FavoriteQa />
+              </TabPane>
+              : null
+            }
             <TabPane
               tab={
                 <div className={actTabs === '3' ? 'tab-3 active' :'tab-3'}>
@@ -196,4 +227,10 @@ class Home extends Component {
     );
   }
 }
-export default Home;
+const mapStateToProps = ({ Login } : { Login: LoginModelState }) => {
+  // 从 state 中取出 namespace 为 users 的 store
+  return {
+    Login
+  }
+}
+export default connect(mapStateToProps)(Home)

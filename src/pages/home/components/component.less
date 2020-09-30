@@ -32,3 +32,270 @@
     margin: 10px 0 20px 0;
   }
 }
+.aModelbox {
+  width: 100%;
+  .contentBox {
+    width: 570px;
+    padding: 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .robotImg {
+    width: 40px;
+    height: 40px;
+    background-image: url('../../../assets/images/robot.png');
+    background-size: 100% 100%;
+    margin-right: 20px;
+  }
+  .robotAnswer {
+    .robotInfo{
+      >span {
+        margin-right: 20px;
+        color: #999999;
+        font-size: 14px;
+      }
+    }
+    .infoBox {
+      width: 470px;
+      background: #F0F2F5;
+      border-radius: 0px 10px 10px 10px;
+      padding: 20px;
+      .infoContent {
+        font-size: 14px;
+        width: 100%;
+        height: 100%;
+        .description {
+          color: #333333;
+          span {
+            color: #1F4EFF;
+          }
+        }
+        .otherIink.description {
+          color: #3975FF;
+          cursor: pointer;
+        }
+        .labelList {
+          margin: 20px 0;
+          .ant-btn {
+            margin: 5px;
+          }
+        }
+        .answerName {
+          color: #1F4EFF;
+          margin: 0px 0px 20px 0px;
+        }
+        .answerContent {
+          width: 100%;
+          .answerContentBox{
+            height: 130px;
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-start;
+            flex-direction: column;
+          }
+          .answerContentBox.upload {
+            height: auto;
+          }
+          .formImgBox {
+            width: 100%;
+            .imgTitle {
+              font-weight: 700;
+              margin: 10px 0;
+              color: #333333;
+            }
+            .formImg {
+              width: 100%;
+              img {
+                width: 100%;
+              }
+            }
+          }
+          .contentHtml {
+            width: 100%;
+            color: #666666;
+          }
+          .upload {
+            cursor: pointer;
+            height: 40px;
+            background-color:#F0F2F5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #3C90F7
+          }
+        }
+        .relationInfo {
+          .title {
+            color: #333333;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 15px 0;
+          }
+          .relationList {
+            padding: 0px 20px;
+            .docTypeItem {
+              display: flex;
+              justify-content: flex-start;
+              align-items: flex-start;
+              .docType {
+                width: 75px;
+                height: 100%;
+                color: #333333;
+                font-size: 14px;
+                margin-bottom: 10px;
+              }
+              .docNameLIst {
+                flex: 1;
+                display: flex;
+                justify-content: flex-start;
+                flex-direction: column;
+                .docItem {
+                  cursor: pointer;
+                  color: #3C90F7;
+                  margin-bottom: 10px;
+                }
+              }
+            }
+          }
+          .commonList {
+            // padding: 0px 20px;
+            .qaItem {
+              cursor: pointer;
+              color: #3C90F8;
+              margin-bottom: 5px;
+            }
+          }
+        }
+      }
+    }
+  }
+  .otherHandle {
+    margin: 22px 0 10px 10px;
+    .otherItem {
+      cursor: pointer;
+      width: 42px;
+      height: 42px;
+      background: #F0F2F5;
+      border-radius: 10px;
+      font-size: 12px;
+      color: #999999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-bottom: 10px;
+      .img {
+        width: 16px;
+        height: 16px;
+        background-size: 100% 100%;
+        margin-bottom: 2px;
+      }
+      .text {
+        font-size: 12px;
+      }
+    }
+    .solveOk {
+      .img {
+        background-image: url('../../../assets/images/solveOk.png');
+      }
+    }
+    .solveOk {
+      .img.active {
+        background-image: url('../../../assets/images/solveOk-active.png');
+      }
+    }
+    .solveNo {
+      .img {
+        background-image: url('../../../assets/images/solveNo.png');
+      }
+    }
+    .solveNo {
+      .img.active {
+        background-image: url('../../../assets/images/solveNo-active.png');
+      }
+    }
+    .favorite {
+      .img {
+        background-image: url('../../../assets/images/favorite.png');
+      }
+    }
+    .favorite.active {
+      .img {
+        background-image: url('../../../assets/images/favorite-active.png');
+      }
+    }
+  }
+  .manualService {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .content {
+      height: 30px;
+      background: #EFF1F5;
+      border-radius: 15px;
+      line-height: 30px;
+      padding: 0 15px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      color: #666666;
+      .warningImg {
+        width: 18px;
+        height: 18px;
+        background-image: url('../../../assets/images/warning.png');
+        background-size: 100% 100%;
+        margin-right: 10px;
+      }
+      .serviceBth {
+        color: #3975FF;
+      }
+    }
+  }
+}
+.qModelbox {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  .contentBox {
+    width: 570px;
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+  }
+  .userImg {
+    width: 40px;
+    height: 40px;
+    background-image: url('../../../assets/images/user.png');
+    background-size: 100% 100%;
+    margin-left: 20px;
+  }
+  .userAnswer {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    .userInfo{
+      display: flex;
+      justify-content: flex-end;
+      >span {
+        margin-left: 20px;
+        color: #999999;
+        font-size: 14px;
+      }
+    }
+    .infoBox {
+      width: fit-content;
+      max-width: 470px;
+      background: #388EFF;
+      border-radius: 10px 0px 10px 10px;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: flex-end;
+      font-size: 14px;
+      color: #FFFFFF;
+    }
+  }
+}

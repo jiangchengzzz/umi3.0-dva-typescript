@@ -2,13 +2,15 @@
  * @Author: 蒋承志
  * @Description: 常见问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-21 15:10:42
+ * @LastEditTime: 2020-09-29 17:11:59
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
 import './component.less';
 import { Pagination } from 'antd';
-import request from '@/utils/request';
+import request from '@/utils/http';
+import { getCase } from '@/servers/qaHome';
+
 
 interface qaType{
 }
@@ -32,32 +34,30 @@ class CorrelationCase extends Component {
   componentDidMount() {
     this.getCaseList();
   }
-    /**
+  /**
    * @Description: 获取qa列表数据
    * @return {type}
    * @Author: 蒋承志
    */
-  getCaseList() {
+  async getCaseList() {
     this.setState({
       loading: true
     })
-    request.get('/api/common/qaList', {
-      params: {
-        pageIndex: this.state.pageIndex
-      }
-    }).then((res: any) => {
-      this.setState({
-        caseList: res.qaList,
-        total: res.total
-      })
-    }).catch( (e: any) => {
-    }).finally (() => {
-      this.setState({
-        loading: false
-      })
+    const data = {
+      pageIndex: this.state.pageIndex,
+      pageSize: this.state.pageSize
+    };
+    const res = await getCase(data);
+    console.log('res :>> ', res);
+    this.setState({
+      caseList: res.result.result,
+      total: res.result.total,
+      loading: false
     })
   }
+
   itemClick(v: any) {
+    console.log('v :>> ', v);
   }
   pageChange(v: number) {
     this.setState({
@@ -74,9 +74,9 @@ class CorrelationCase extends Component {
           {
             caseList.map((v: any, i: number) => {
               return (
-                <div className="dataItem" key={v.id} onClick={() => this.itemClick(v)}>
+                <div className="dataItem" key={v.docId} onClick={() => this.itemClick(v)}>
                   <div className="ind">{i + (pageIndex - 1) * pageSize + 1}.</div>
-                  <div className="info text-ellipsis">{v.info}</div>
+                  <div className="info text-ellipsis">{v.docName}</div>
                 </div>
               )
             })

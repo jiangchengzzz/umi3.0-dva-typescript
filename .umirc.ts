@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-16 11:37:11
- * @LastEditTime: 2020-09-24 10:48:28
+ * @LastEditTime: 2020-09-30 10:09:47
  * @LastEditors: 蒋承志
  */
 import { defineConfig } from 'umi';
@@ -15,6 +15,7 @@ export default defineConfig({
     skipModelValidate: true , // 是否跳过 model 验证。
     // extraModels: [], // 配置额外到 dva model。
   },
+  mock: false,
   // layout: {},
   nodeModulesTransform: {
     type: 'none',
@@ -28,20 +29,25 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  proxy: {
+    '/api': {
+      target: 'http://10.8.0.126:7984/',
+      pathRewrite: { '^/api': '' },
+      changeOrigin: true
+    }
+  },
   routes: [
     {
       path: '/',
       redirect: '/home',
     },
-    { exact: true, path: '/login', component: '@/pages/login/index' },
     {
       path: '/',
       exact: false,
       // redirect: '/test',
       component: '@/layouts/index',
       routes: [
-        { exact: true, path: '/home', component: '@/pages/home/index' },
-        { exact: true, path: '/isTest', redirect: '/home', component: '@/pages/isTest/index' },
+        { exact: true, path: '/home', component: '@/pages/home/index' }
       ],
     }
   ],

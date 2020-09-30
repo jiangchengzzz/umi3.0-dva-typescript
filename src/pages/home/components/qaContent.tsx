@@ -2,17 +2,26 @@
  * @Author: 蒋承志
  * @Description: 问答内容
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-24 19:16:23
+ * @LastEditTime: 2020-09-29 18:16:49
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
 import './qaContent.less';
-import request from '@/utils/request';
+import request from '@/utils/http';
 import { Button } from 'antd';
-import E from 'wangeditor'
+import E from 'wangeditor';
+import { getQa, getLabel, getQaType, getQaDetail } from '@/servers/qaHome';
+import AnswerModel from './answerModel';
+import QuestionModel from './questionModel'
 
+interface qaInfo{
+  docId: string,
+  docType: string
+}
 interface QaContentProps{
-  actQaType: string
+  actQaType: string,
+  loginState: boolean,
+  qaInfo: qaInfo
 }
 let editor: any;
 class QaContent extends Component<QaContentProps> {
@@ -21,29 +30,70 @@ class QaContent extends Component<QaContentProps> {
   }
   state = {
     labelScreenVal: '',
-    labelList: []
+    labelList: [],
+    qaList: [],
+    actQaId: ''
   }
   componentDidMount() {
-    this.initEditor()
-    this.getLabel();
-    this.getQaChatList()
+    this.initEditor();
+    this.getLabel('');
+    this.getQaType('');
+    // this.getQaChatList();
   }
   componentWillReceiveProps(nextProps: any) {
     if (nextProps.actQaType !== this.props.actQaType) {
+      console.log('123 :>> ', 123);
       editor.txt.html('');
-      this.getLabel();
+      this.getLabel(nextProps.actQaType);
+      this.getQaType(nextProps.actQaType);
+      // 获取俩天记录
+    }
+    if (nextProps.qaInfo.docId !== this.props.qaInfo.docId) {
+      this.getQaDetail(nextProps.qaInfo)
     }
   }
-  getQaChatList() {
-    request.get('/api/qaChatList', {
-      params: {
-        value: this.state.labelScreenVal
-      }
-    }).then((res: any) => {
-      this.setState({
-        labelList: res.labelList
-      })
-    }).catch( (e: any) => {
+  async getQaType(type: string) {
+    console.log('label :>> ', type);
+    const data = {
+      type
+    }
+    editor.txt.html('');
+    const res: any = await getQaType(data);
+    const resData: any = res.result;
+    console.log('resData31231312312 :>> ', resData);
+    this.setState({
+      qaList: [resData],
+      actQaId: resData.dialogId
+    })
+  }
+  async getQaChatList(q: string, label?: any) {
+    const data = {
+      nodeId: label ? label.nodeId : '',
+      preDialogId: this.state.actQaId,
+      // question: editor.txt.text(),
+      question: q,
+      // question: '个人所得税法',
+      type: this.props.actQaType
+    }
+    editor.txt.html('');
+    const res: any = await getQa(data);
+    const resData: any = res.result;
+    this.setState({
+      qaList: [...this.state.qaList, resData],
+      actQaId: resData.dialogId
+    })
+  }
+  async getQaDetail(info: qaInfo) {
+    const data = {
+      docId: info.docId,
+      docType: info.docType,
+    }
+    // editor.txt.html('');
+    const res: any = await getQaDetail(data);
+    const resData: any = res.result;
+    this.setState({
+      qaList: [...this.state.qaList, resData],
+      actQaId: resData.dialogId
     })
   }
   /**
@@ -78,36 +128,51 @@ class QaContent extends Component<QaContentProps> {
     editor.create();
     // editor.txt.html('<p style="color: #cccccc">请输入您要资讯的问题</p>');
   }
-  getLabel() {
-    request.get('/api/labelList', {
-      params: {
-        value: this.state.labelScreenVal
-      }
-    }).then((res: any) => {
-      this.setState({
-        labelList: res.labelList
-      })
-    }).catch( (e: any) => {
+  async getLabel(type: string) {
+    const data = {
+      type
+    }
+    const res = await getLabel(data);
+    this.setState({
+      labelList: res.result.list
     })
   }
-  labelClick(labelId: string) {
-    console.log('labelId :>> ', labelId);
+  labelClick(label: any) {
+    this.getQaChatList(label.nodeName)
   }
   closeChat() {
   }
   submit() {
     console.log('editor.txt.text() :>> ', editor.txt.text());
     console.log('editor.txt.text() :>> ', editor.txt.html());
-    console.log('提交 :>> ');
+    const questionData: any = {
+      qaType: 'question',
+      dialogId: '313241',
+      questionInfo: editor.txt.text(),
+      resTime: new Date().getTime()
+    }
+    console.log('questionData :>> ', questionData);
+    this.getQaChatList(editor.txt.text());
   }
 
   render() {
-    const { labelList } : any = this.state
+    const { labelList, qaList } : any = this.state
+    console.log('qaList :>> ', qaList);
     return (
       <div className="qaContent">
         <div className="qaInfo">
           <div className="qaList">
-
+            {
+              qaList.length > 0 &&
+              qaList.map((v: any) => {
+                return <div key={v.dialogId}>
+                  {
+                    v.state !== 99 && <QuestionModel loginState={this.props.loginState} qaData={v} />
+                  }
+                  <AnswerModel loginState={this.props.loginState} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
+                </div>
+              })
+            }
           </div>
         </div>
         <div className="label">
@@ -116,8 +181,8 @@ class QaContent extends Component<QaContentProps> {
             {
               labelList.map((v: any) => {
                 return (
-                  <div className="labelItem" key={v.id}>
-                    <Button size="small" onClick={() => this.labelClick(v.id)}>{v.name}</Button>
+                  <div className="labelItem" key={v.nodeId}>
+                    <Button size="small" onClick={() => this.labelClick(v)}>{v.nodeName}</Button>
                   </div>
                 )
               })
@@ -141,7 +206,7 @@ class QaContent extends Component<QaContentProps> {
               <Button onClick={this.closeChat}>关闭会话</Button>
             </div>
             <div className="submit">
-              <Button onClick={this.submit}>发送</Button>
+              <Button onClick={() => this.submit()}>发送</Button>
             </div>
           </div>
         </div>

@@ -3,7 +3,6 @@ import './index.less';
 import { Layout, Menu } from 'antd';
 import { Link } from 'umi'
 import LoginModel from '../../components/loginModel/index'
-import LoginModelTest from '../../components/loginModelTest/index'
 import { connect, Dispatch, LoginModelState } from 'umi'
 
 const { Header, Content, Footer } = Layout;
@@ -13,7 +12,6 @@ interface LayoutProps{
 }
 class BasicLayout extends Component<LayoutProps> {
   state = {
-    loginVisible: false,
     menuList: [
       {
         name: '工具',
@@ -26,27 +24,26 @@ class BasicLayout extends Component<LayoutProps> {
     ]
   }
   componentDidMount() {
-    this.props.dispatch({
-      type: 'Login/changeVisble',
-      payload: {
-        modelVisble: true,
-        name: 'jiangjiangn'
-      }
-    })
   }
   handleClickMenu = (e: any) => {
-    console.log('e :>>111 ', e);
   };
   handleClick = (e: any, v: any) => {
-    // this.setState({
-    // })
   };
   render() {
     return (
       <Layout className="layoutBox">
         <Header className="header-box" style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
           <div className="header-content">
-            <div className="logoBox">
+            <div className="logoBox" onClick={
+              () => {
+                this.props.dispatch({
+                  type: 'Login/changeVisble',
+                  payload: {
+                    modelVisble: !this.props.Login.modelVisble
+                  }
+                })
+              }
+            }>
                 <div className="logo"></div>
                 <div className="line"></div>
                 <div className="text">税悟不懂问小悟</div>
@@ -67,7 +64,6 @@ class BasicLayout extends Component<LayoutProps> {
             </div>
           </div>
           <LoginModel />
-          <LoginModelTest />
         </Header>
         <Content className="site-layout">
           {this.props.children}

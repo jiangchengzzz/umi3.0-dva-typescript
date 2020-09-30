@@ -1,14 +1,14 @@
 /*
  * @Author: 蒋承志
- * @Description: 登录model
+ * @Description: 登录model 这个是用来测试无状态组件中dva的应用，与交互
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-24 17:52:41
+ * @LastEditTime: 2020-09-25 15:27:51
  * @LastEditors: 蒋承志
  */
 // import React, {Component} from 'react';
 import React, { FC } from 'react';
 import './index.less';
-import request from '@/utils/request';
+import http from '@/utils/http';
 import { Modal, Button } from 'antd';
 import { LoginModelState, ConnectProps, connect } from 'umi'
 
@@ -48,7 +48,7 @@ export default connect(mapStateToProps)(LoginModelTest)
 //     });
 //   };
 //   // getQaChatList() {
-//   //   request.get('/api/qaChatList', {
+//   //   http.get('/api/qaChatList', {
 //   //     params: {
 //   //       value: this.state.labelScreenVal
 //   //     }

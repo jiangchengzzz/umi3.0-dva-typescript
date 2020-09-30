@@ -2,19 +2,21 @@
  * @Author: 蒋承志
  * @Description: 常见问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-21 15:03:34
+ * @LastEditTime: 2020-09-29 17:21:56
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
 import './component.less';
 import { Pagination } from 'antd';
-import request from '@/utils/request';
+import http from '@/utils/http';
+import { getCommonQa } from '@/servers/qaHome';
 
-interface qaType{
+interface CommonQaProps{
+  getQa: Function
 }
 
-class CommonQa extends Component {
-  constructor(props: any){
+class CommonQa extends Component<CommonQaProps> {
+  constructor(props: CommonQaProps){
     super(props)
   }
   state = {
@@ -78,27 +80,21 @@ class CommonQa extends Component {
    * @return {type}
    * @Author: 蒋承志
    */
-  getQaList() {
+  async getQaList() {
     this.setState({
       loading: true
     })
-    request.get('/api/common/qaList', {
-      params: {
-        pageIndex: this.state.pageIndex
-      }
-    }).then((res: any) => {
-      this.setState({
-        qaList: res.qaList,
-        total: res.total
-      })
-    }).catch( (e: any) => {
-    }).finally (() => {
-      this.setState({
-        loading: false
-      })
+    const data = {
+      pageIndex: this.state.pageIndex,
+      pageSize: this.state.pageSize
+    };
+    const res = await getCommonQa(data);
+    console.log('res :>> ', res);
+    this.setState({
+      qaList: res.result.result,
+      total: res.result.total,
+      loading: false
     })
-  }
-  itemClick(v: any) {
   }
   pageChange(v: number) {
     this.setState({
@@ -108,16 +104,17 @@ class CommonQa extends Component {
     })
   }
   render() {
-    const { qaList, pageIndex, pageSize, total } : any = this.state
+    const { qaList, pageIndex, pageSize, total } : any = this.state;
+    console.log('qaList124123412341234 :>> ', qaList);
     return (
       <div className="commonQa">
         <div className="dataList">
           {
-            qaList.map((v: any, i: number) => {
+            qaList.length > 0 && qaList.map((v: any, i: number) => {
               return (
-                <div className="dataItem" key={v.id} onClick={() => this.itemClick(v)}>
+                <div className="dataItem" key={v.docId} onClick={() => this.props.getQa(v)}>
                   <div className="ind">{i + (pageIndex - 1) * pageSize + 1}.</div>
-                  <div className="info text-ellipsis">{v.info}</div>
+                  <div className="info text-ellipsis">{v.docName}</div>
                 </div>
               )
             })

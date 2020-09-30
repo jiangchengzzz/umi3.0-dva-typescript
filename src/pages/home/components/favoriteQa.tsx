@@ -8,7 +8,7 @@
 import React, {Component} from 'react';
 import './component.less';
 import { Pagination } from 'antd';
-import request from '@/utils/request';
+import request from '@/utils/http';
 
 interface qaType{
 }
