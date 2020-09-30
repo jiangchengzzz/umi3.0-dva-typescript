@@ -48,7 +48,7 @@ class Home extends Component<HomeProps> {
         active: false
       },
       {
-        name: '电子税悟局操作指引',
+        name: '电子税务局操作指引',
         typeId: '4',
         active: false
       },

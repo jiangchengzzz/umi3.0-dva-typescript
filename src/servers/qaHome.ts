@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-27 11:43:51
- * @LastEditTime: 2020-09-29 18:27:41
+ * @LastEditTime: 2020-09-30 11:25:34
  * @LastEditors: 蒋承志
  */
 
@@ -55,6 +55,13 @@ export const getCase = async (data: any) => {
 export const setSolveType = async (data: any) => {
   return http('/api/qa/mark', {
     method: 'post',
+    data: data
+  })
+}
+// 标记是否已解决
+export const getRecord = async (data: any) => {
+  return http('/api/qa/record', {
+    method: 'get',
     data: data
   })
 }

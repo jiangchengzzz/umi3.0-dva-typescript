@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 问答内容
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-29 18:16:49
+ * @LastEditTime: 2020-09-30 16:32:26
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
@@ -10,7 +10,7 @@ import './qaContent.less';
 import request from '@/utils/http';
 import { Button } from 'antd';
 import E from 'wangeditor';
-import { getQa, getLabel, getQaType, getQaDetail } from '@/servers/qaHome';
+import { getQa, getLabel, getQaType, getQaDetail, getRecord } from '@/servers/qaHome';
 import AnswerModel from './answerModel';
 import QuestionModel from './questionModel'
 
@@ -32,17 +32,20 @@ class QaContent extends Component<QaContentProps> {
     labelScreenVal: '',
     labelList: [],
     qaList: [],
-    actQaId: ''
+    actQaId: '',
+    recordList: [],
+    havaRecord: '1', // 1：开始第一次，2：有且没有更多 3： 有更多
+    qaBoxCon: ''
   }
   componentDidMount() {
     this.initEditor();
     this.getLabel('');
     this.getQaType('');
+    this.getRecord('');
     // this.getQaChatList();
   }
   componentWillReceiveProps(nextProps: any) {
     if (nextProps.actQaType !== this.props.actQaType) {
-      console.log('123 :>> ', 123);
       editor.txt.html('');
       this.getLabel(nextProps.actQaType);
       this.getQaType(nextProps.actQaType);
@@ -53,14 +56,12 @@ class QaContent extends Component<QaContentProps> {
     }
   }
   async getQaType(type: string) {
-    console.log('label :>> ', type);
     const data = {
       type
     }
     editor.txt.html('');
     const res: any = await getQaType(data);
     const resData: any = res.result;
-    console.log('resData31231312312 :>> ', resData);
     this.setState({
       qaList: [resData],
       actQaId: resData.dialogId
@@ -116,6 +117,16 @@ class QaContent extends Component<QaContentProps> {
       'emoticon',  // 表情
       'image',  // 插入图片
     ];
+    editor.customConfig.emotions = [
+      {
+        // tab 的标题
+        title: 'emoji',
+        // type -> 'emoji' / 'image'
+        type: 'emoji',
+        // content -> 数组
+        content: ['😀', '😃', '😄', '😁', '😆']
+      }
+    ]
     // editor.customConfig.onfocus = function () {
     //   if (editor.txt.html() === '<p style="color: #cccccc">请输入您要资讯的问题</p>') {
     //     editor.txt.html('');
@@ -140,28 +151,74 @@ class QaContent extends Component<QaContentProps> {
   labelClick(label: any) {
     this.getQaChatList(label.nodeName)
   }
+  showRecord() {
+    if (this.state.havaRecord === '1') {
+      this.setState({
+        havaRecord: this.state.recordList.length === 10 ? '2' : '3'
+      });
+    } else {
+      const record: any = this.state.recordList[0];
+      this.getRecord(record.dialogId);
+    }
+  }
   closeChat() {
   }
   submit() {
-    console.log('editor.txt.text() :>> ', editor.txt.text());
-    console.log('editor.txt.text() :>> ', editor.txt.html());
-    const questionData: any = {
-      qaType: 'question',
-      dialogId: '313241',
-      questionInfo: editor.txt.text(),
-      resTime: new Date().getTime()
-    }
-    console.log('questionData :>> ', questionData);
     this.getQaChatList(editor.txt.text());
   }
-
+  async getRecord(dialogId: string){
+    const data = {
+      dialogId
+    }
+    const res = await getRecord(data);
+    let flag: string;
+    // 0: 啥都不显示 1： 只显示展示更多 2：都显示 3： 只显示记录
+    if (!dialogId) {
+      if (res.result.list.length > 0) {
+        flag = '1';
+      } else {
+        flag = '0';
+      }
+    } else {
+      flag = res.result.list.length === 10 ? '2' : '3';
+    }
+    this.setState({
+      recordList: [...this.state.recordList , ...res.result.list],
+      havaRecord: flag
+    })
+  }
   render() {
-    const { labelList, qaList } : any = this.state
-    console.log('qaList :>> ', qaList);
+    const { labelList, qaList, recordList, havaRecord } : any = this.state
     return (
       <div className="qaContent">
-        <div className="qaInfo">
+        <div className="qaInfo" ref={(el) => { this.qaBoxCon = el; }}>
           <div className="qaList">
+            {
+              havaRecord === '0' ?
+                null
+              :
+                <div className="record">
+                  {
+                    havaRecord !== '3' ?
+                    <div className="showMoreRecord">
+                      <span  onClick={() => this.showRecord()}>点击加载更多记录</span>
+                    </div>
+                    : null
+                  }
+                  {
+                    havaRecord !== '1' ?
+                      recordList.map((v: any) => {
+                        return <div key={v.dialogId}>
+                          {
+                            v.state !== 99 && <QuestionModel loginState={this.props.loginState} qaData={v} />
+                          }
+                          <AnswerModel loginState={this.props.loginState} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
+                        </div>
+                      })
+                    : null
+                  }
+                </div>
+            }
             {
               qaList.length > 0 &&
               qaList.map((v: any) => {

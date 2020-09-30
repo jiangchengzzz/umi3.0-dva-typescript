@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-30 10:09:09
+ * @LastEditTime: 2020-09-30 16:16:33
  * @LastEditors: 蒋承志
  */
 import React, { Component } from 'react';
@@ -173,13 +173,11 @@ class AnswerModel extends Component<UserModalProps> {
     }
   }
   async handle(type: boolean) {
-    console.log('type :>> ', type);
     const data = {
       dialogId: this.props.qaData.dialogId,
       solved: type ? '1' : '0'
     }
     const res = await setSolveType(data);
-    console.log('res :>> ', res);
     if (res.code === '1000') {
       this.setState({
         solveStatus: type ? true : false
@@ -231,11 +229,14 @@ class AnswerModel extends Component<UserModalProps> {
             </div>
           }
         </div>
-        <div className="manualService">
-          <div className="content">
-            <span className="warningImg"></span>问题未解决？我要<span className="serviceBth">转人工客服</span>
-          </div>
-        </div>
+        {
+          qaData.state === 0 || this.state.solveStatus === false ?
+          <div className="manualService">
+            <div className="content">
+              <span className="warningImg"></span>问题未解决？我要<span className="serviceBth">转人工客服</span>
+            </div>
+          </div> : null
+        }
       </div>
     )
   }
