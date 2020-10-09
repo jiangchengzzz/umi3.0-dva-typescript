@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-25 15:25:45
- * @LastEditTime: 2020-09-27 11:24:52
+ * @LastEditTime: 2020-10-09 16:09:13
  * @LastEditors: 蒋承志
  */
 import http from '@/utils/http';
@@ -64,7 +64,7 @@ export const userBaseInfo = async () => {
 }
 export const getPermission = async () => {
   return http('/api/portal/uc/user/portal/permission', {
-    method: 'get',
+    method: 'post',
     headers: {
       Authorization: handleWebStorage.getLocalData('token_type') + handleWebStorage.getLocalData('access_token')
     }

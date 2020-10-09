@@ -2,20 +2,21 @@
  * @Author: 蒋承志
  * @Description: 常见问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-29 17:11:59
+ * @LastEditTime: 2020-10-09 18:08:01
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
 import './component.less';
-import { Pagination } from 'antd';
+import { Pagination, message } from 'antd';
 import request from '@/utils/http';
 import { getCase } from '@/servers/qaHome';
 
 
-interface qaType{
+interface CorrelationCaseProps{
+  loginState: boolean
 }
 
-class CorrelationCase extends Component {
+class CorrelationCase extends Component<CorrelationCaseProps> {
   constructor(props: any){
     super(props)
   }
@@ -58,6 +59,11 @@ class CorrelationCase extends Component {
 
   itemClick(v: any) {
     console.log('v :>> ', v);
+    if(this.props.loginState) {
+      window.open(`/#/detail/referCase?id=${v.docId}&type=${v.docType}`, '_blank');
+    } else {
+      message.success('登录后才能跳转到相关案例');
+    }
   }
   pageChange(v: number) {
     this.setState({

@@ -2,29 +2,48 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-30 16:16:33
+ * @LastEditTime: 2020-10-09 18:26:48
  * @LastEditors: 蒋承志
  */
-import React, { Component } from 'react';
+import React, { Component, FC } from 'react';
 import './component.less';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { setSolveType } from '@/servers/qaHome';
+import { setFavoriteConfilm, setFavoriteCancel } from '@/servers/qaHome';
 
 interface UserModalProps {
   qaData: any;
   getQa: Function;
   loginState: boolean;
-  qaDetail: Function
+  qaDetail: Function;
+  actQaType: string;
 }
-
 class AnswerModel extends Component<UserModalProps> {
   constructor(props: UserModalProps){
     super(props)
+    this.conBox = React.createRef();
   }
   state = {
     upload: false,
-    solveStatus: null
+    solveStatus: null,
+    showUpload: false,
+    isFavorite: false
+  }
+  componentDidMount() {
+    const con = this.conBox.current;
+    if (con) {
+      if (this.state.showUpload === false) {
+        console.log('con[0].clientHeight :>> ', con.clientHeight);
+        if (con.clientHeight > 80) {
+          this.setState({
+            showUpload: true
+          })
+        }
+      }
+    }
+  }
+  componentDidUpdate() {
   }
   upload(type: boolean) {
     this.setState({
@@ -34,8 +53,45 @@ class AnswerModel extends Component<UserModalProps> {
   labelClick(label: any) {
     this.props.getQa('', label)
   }
-  relationClick(id: string) {
-    console.log('id :>> ', id);
+  relationClick(val: any) {
+    console.log('val :>> ', val);
+    if(this.props.loginState) {
+      let url = '/detail/lawsRegulations';
+      switch (String(val.docType)) {
+        case '1':
+          url = '/detail/manageStandard';
+          break;
+        case '2':
+          url = '/detail/formProve';
+          break;
+        case '3':
+          url = '/detail/lawsRegulations';
+          break;
+        case '4':
+          url = '/detail/policyExplain';
+          break;
+        case '5':
+          url = '/detail/ratepayingServeStandard';
+          break;
+        case '6':
+          url = '/detail/inspectStandard';
+          break;
+        case '7':
+          url = '/detail/fanLawsRegulations';
+          break;
+        case '8':
+          url = '/detail/referCase';
+          break;
+        case '9':
+          url = '/term/detail';
+          break;
+        default:
+          break;
+      }
+      window.open(`/#${url}?id=${val.docId}&type=${val.docType}${val.docType === '6' ? `&version=${val.docVersion}` : ''}`, '_blank');
+    } else {
+      message.success('登录后才能跳转到相关资料');
+    }
   }
   otherIink(link: string) {
     window.open(link, '_blank');
@@ -73,22 +129,27 @@ class AnswerModel extends Component<UserModalProps> {
                 </div>
                 : null
               }
-              <div className="contentHtml" dangerouslySetInnerHTML={{__html: qaData.answer.fullHtml}}></div>
+              {/* {
+                <ContentHtml qaData={qaData} />
+              } */}
+              <div className="contentHtml" ref={this.conBox } dangerouslySetInnerHTML={{__html: qaData.answer.fullHtml}}></div>
             </div>
-            <div className="upload">
-              {
-                this.state.upload ?
-                <div onClick={() =>this.upload(false)}>
-                  <span>收起更多</span>
-                  <UpOutlined />
-                </div>
-                :
-                <div onClick={() =>this.upload(true)}>
-                  <span>展开更多</span>
-                  <DownOutlined />
-                </div>
-              }
-            </div>
+            {
+              this.state.showUpload && <div className="upload">
+                {
+                  this.state.upload ?
+                  <div onClick={() =>this.upload(false)}>
+                    <span>收起更多</span>
+                    <UpOutlined />
+                  </div>
+                  :
+                  <div onClick={() =>this.upload(true)}>
+                    <span>展开更多</span>
+                    <DownOutlined />
+                  </div>
+                }
+              </div>
+            }
           </div>
           <div className="relationInfo">
             <div className="title">
@@ -105,7 +166,7 @@ class AnswerModel extends Component<UserModalProps> {
                           v.content.map((val: any, i: number) => {
                             if (i < 2) {
                               return (
-                                <div key={val.id} onClick={(val: any) => this.relationClick(val.id)} className="docItem">{ `${val.dispatchUnit} ${val.dirNum} ${val.name}（${val.writNo}）` }</div>
+                                <div key={val.id} onClick={() => this.relationClick(val)} className="docItem">{ `${val.dispatchUnit} ${val.dirNum} ${val.name}（${val.writNo}）` }</div>
                               )
                             }
                           })
@@ -184,12 +245,26 @@ class AnswerModel extends Component<UserModalProps> {
       })
     }
   }
-  setFavorite() {
-    console.log('收藏 :>> ');
+  async setFavorite(docId: string) {
+    const data = {
+      docId
+    }
+    if (this.state.isFavorite) {
+      const res: any = await setFavoriteCancel(data);
+      message.success('取消收藏成功');
+      this.setState({
+        isFavorite: !this.state.isFavorite
+      })
+    } else {
+      const res: any = await setFavoriteConfilm(data);
+      message.success('收藏成功');
+      this.setState({
+        isFavorite: !this.state.isFavorite
+      })
+    }
   }
   render() {
     const { qaData } = this.props;
-    console.log('qaData :>>12312 ', qaData);
     return (
       <div className="aModelbox">
         <div className="contentBox">
@@ -211,16 +286,19 @@ class AnswerModel extends Component<UserModalProps> {
             :
             <div className="otherHandle">
               <div className="otherItem solveOk" onClick={() => this.handle(true)}>
-                <div className={ this.state.solveStatus === true ? 'img active' : 'img' }></div>
+                <div className={ this.state.solveStatus === true || qaData.solved ? 'img active' : 'img' }></div>
                 <div className="text">已解决</div>
               </div>
               <div className="otherItem solveNo" onClick={() => this.handle(false)}>
-                <div className={ this.state.solveStatus === false ? 'img active' : 'img' }></div>
+                <div className={ this.state.solveStatus === false || qaData.solved === false ? 'img active' : 'img' }></div>
                 <div className="text">未解决</div>
               </div>
               {
-                this.props.loginState ?
-                <div className="otherItem favorite" onClick={() => this.setFavorite()}>
+                console.log('this.props', this.props)
+              }
+              {
+                this.props.loginState && (String(this.props.qaData.answer.docType) === '3' || String(this.props.actQaType) === '2') ?
+                <div className={ this.state.isFavorite === false ? 'otherItem favorite' : 'otherItem favorite active' } onClick={() => this.setFavorite(this.props.qaData.answer.docId)}>
                   <div className="img"></div>
                   <div className="text">收藏</div>
                 </div>

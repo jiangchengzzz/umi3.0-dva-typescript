@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import 'antd/dist/antd.css';
 import './index.less';
-import { Tabs } from 'antd';
+import { Tabs, message } from 'antd';
 import { AppleOutlined, AndroidOutlined } from '@ant-design/icons';
 import CommonQa from './components/commonQa';
 import CorrelationCase from './components/correlationCase';
@@ -66,6 +66,54 @@ class Home extends Component<HomeProps> {
       docType: ''
     }
   }
+  resetState() {
+    this.setState({
+      typeList: [
+        {
+          name: '全部',
+          typeId: '99999',
+          active: true
+        },
+        {
+          name: '办税事项',
+          typeId: '0',
+          active: false
+        },
+        {
+          name: '办税表单',
+          active: false,
+          typeId: '1'
+        },
+        {
+          name: '办事指引',
+          typeId: '2',
+          active: false
+        },
+        {
+          name: '法规依据',
+          typeId: '3',
+          active: false
+        },
+        {
+          name: '电子税务局操作指引',
+          typeId: '4',
+          active: false
+        },
+        {
+          name: '其他',
+          typeId: '5',
+          active: false
+        }
+      ],
+      actQaType: '1',
+      actTabs: '1',
+      isLogin: false,
+      qaInfo: {
+        docId: '',
+        docType: ''
+      }
+    })
+  }
   componentWillMount() {
     // 组件挂载到DOM前调用
     console.log('this.props.login :>> ', this.props.Login);
@@ -105,30 +153,34 @@ class Home extends Component<HomeProps> {
     })
   }
   entranceClick(type: string) {
+    let url = '';
     switch (type) {
-      case '1':
-        console.log(1)
-        // window.open('')
-        break;
       case '2':
-        console.log(2)
-      break;
+        url = '/search/formProve';
+        break;
+      case '50':
+        url = '';
+        message.info('暂时不支持跳转')
+        break;
+      case '51':
+        url = '';
+        message.info('暂时不支持跳转')
+        break;
+      case '52':
+        url = '';
+        message.info('暂时不支持跳转')
+        break;
+      case '53':
+        url = '';
+        message.info('暂时不支持跳转')
+        break;
       case '3':
-        console.log(3)
-      break;
-      case '4':
-        console.log(4)
-      break;
-      case '5':
-        console.log(5)
-      break;
-      case '6':
-        console.log(6)
-      break;
-      default:
+        url = '/search/lawsRegulations';
         break;
     }
-    console.log('this.props :>> ', this.props);
+    if (url) {
+      window.open(`/#${url}`, '_blank');
+    }
   }
   render() {
     const { typeList, actTabs, actQaType } = this.state;
@@ -160,7 +212,7 @@ class Home extends Component<HomeProps> {
           </div>
         </div>
         <div className="qaContentBox">
-          <QaContent actQaType={actQaType} qaInfo={this.state.qaInfo} loginState={this.props.Login.isLogin} />
+          <QaContent actQaType={actQaType} resetType={this.resetState.bind(this)} qaInfo={this.state.qaInfo} loginState={this.props.Login.isLogin} />
         </div>
         <div className="qaOther">
           <div className="recommend">
@@ -201,19 +253,19 @@ class Home extends Component<HomeProps> {
               }
               key="3"
             >
-              <CorrelationCase />
+              <CorrelationCase loginState={this.props.Login.isLogin} />
             </TabPane>
           </Tabs>
           </div>
           <div className="entrance">
             <div className="title">快速入口</div>
             <div className="enteranceList">
-              <div className="entrance1" onClick={() => this.entranceClick('1')}></div>
-              <div className="entrance2" onClick={() => this.entranceClick('2')}></div>
-              <div className="entrance3" onClick={() => this.entranceClick('3')}></div>
-              <div className="entrance4" onClick={() => this.entranceClick('4')}></div>
-              <div className="entrance5" onClick={() => this.entranceClick('5')}></div>
-              <div className="entrance6" onClick={() => this.entranceClick('6')}></div>
+              <div className="entrance1" onClick={() => this.entranceClick('2')}></div>
+              <div className="entrance2" onClick={() => this.entranceClick('50')}></div>
+              <div className="entrance3" onClick={() => this.entranceClick('51')}></div>
+              <div className="entrance4" onClick={() => this.entranceClick('52')}></div>
+              <div className="entrance5" onClick={() => this.entranceClick('53')}></div>
+              <div className="entrance6" onClick={() => this.entranceClick('3')}></div>
             </div>
             <div className="code">
               <div className="codeImg"></div>

@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 常见问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-29 17:21:56
+ * @LastEditTime: 2020-10-09 12:36:19
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
@@ -105,7 +105,6 @@ class CommonQa extends Component<CommonQaProps> {
   }
   render() {
     const { qaList, pageIndex, pageSize, total } : any = this.state;
-    console.log('qaList124123412341234 :>> ', qaList);
     return (
       <div className="commonQa">
         <div className="dataList">

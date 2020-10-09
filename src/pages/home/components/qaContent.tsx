@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 问答内容
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-30 16:32:26
+ * @LastEditTime: 2020-10-09 17:06:24
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
@@ -21,13 +21,15 @@ interface qaInfo{
 interface QaContentProps{
   actQaType: string,
   loginState: boolean,
-  qaInfo: qaInfo
+  qaInfo: qaInfo,
+  resetType: Function
 }
 let editor: any;
 class QaContent extends Component<QaContentProps> {
   constructor(props: QaContentProps){
     super(props)
   }
+  qaBoxCon = null;
   state = {
     labelScreenVal: '',
     labelList: [],
@@ -35,7 +37,6 @@ class QaContent extends Component<QaContentProps> {
     actQaId: '',
     recordList: [],
     havaRecord: '1', // 1：开始第一次，2：有且没有更多 3： 有更多
-    qaBoxCon: ''
   }
   componentDidMount() {
     this.initEditor();
@@ -57,7 +58,7 @@ class QaContent extends Component<QaContentProps> {
   }
   async getQaType(type: string) {
     const data = {
-      type
+      type: type === '99999' ? '' : type
     }
     editor.txt.html('');
     const res: any = await getQaType(data);
@@ -82,6 +83,8 @@ class QaContent extends Component<QaContentProps> {
     this.setState({
       qaList: [...this.state.qaList, resData],
       actQaId: resData.dialogId
+    }, () => {
+      this.scrollBottom()
     })
   }
   async getQaDetail(info: qaInfo) {
@@ -92,10 +95,23 @@ class QaContent extends Component<QaContentProps> {
     // editor.txt.html('');
     const res: any = await getQaDetail(data);
     const resData: any = res.result;
+    resData.answer.fullHtml = resData.answer.fullHtml;
     this.setState({
       qaList: [...this.state.qaList, resData],
       actQaId: resData.dialogId
+    }, () => {
+      this.scrollBottom()
     })
+  }
+  scrollBottom() {
+    console.log('this.messagesEnd :>> ', this.qaBoxCon);
+    if (this.qaBoxCon) {
+      const scrollHeight = this.qaBoxCon.scrollHeight;//里面div的实际高度  2000px
+      const height = this.qaBoxCon.clientHeight;  //网页可见高度  200px
+      const maxScrollTop = scrollHeight - height;
+      this.qaBoxCon.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+      //如果实际高度大于可见高度，说明是有滚动条的，则直接把网页被卷去的高度设置为两个div的高度差，实际效果就是滚动到底部了。
+    }
   }
   /**
    * @Description: 初始化富文本编辑器
@@ -162,6 +178,15 @@ class QaContent extends Component<QaContentProps> {
     }
   }
   closeChat() {
+    this.setState({
+      labelScreenVal: '',
+      labelList: [],
+      qaList: [],
+      actQaId: '',
+      recordList: [],
+      havaRecord: '1'
+    });
+    this.props.resetType();
   }
   submit() {
     this.getQaChatList(editor.txt.text());
@@ -208,11 +233,11 @@ class QaContent extends Component<QaContentProps> {
                   {
                     havaRecord !== '1' ?
                       recordList.map((v: any) => {
-                        return <div key={v.dialogId}>
+                        return <div style={{pointerEvents: 'none'}} key={v.dialogId}>
                           {
                             v.state !== 99 && <QuestionModel loginState={this.props.loginState} qaData={v} />
                           }
-                          <AnswerModel loginState={this.props.loginState} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
+                          <AnswerModel loginState={this.props.loginState} actQaType={this.props.actQaType} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
                         </div>
                       })
                     : null
@@ -226,7 +251,7 @@ class QaContent extends Component<QaContentProps> {
                   {
                     v.state !== 99 && <QuestionModel loginState={this.props.loginState} qaData={v} />
                   }
-                  <AnswerModel loginState={this.props.loginState} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
+                  <AnswerModel loginState={this.props.loginState} actQaType={this.props.actQaType} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
                 </div>
               })
             }
@@ -260,7 +285,7 @@ class QaContent extends Component<QaContentProps> {
           </div>
           <div className="sub">
             <div className="close">
-              <Button onClick={this.closeChat}>关闭会话</Button>
+              <Button onClick={() => this.closeChat()}>关闭会话</Button>
             </div>
             <div className="submit">
               <Button onClick={() => this.submit()}>发送</Button>

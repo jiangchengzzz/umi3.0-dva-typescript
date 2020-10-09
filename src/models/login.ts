@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-23 17:39:10
- * @LastEditTime: 2020-09-29 12:03:33
+ * @LastEditTime: 2020-10-09 18:23:08
  * @LastEditors: 蒋承志
  */
 import { Effect, ImmerReducer, Reducer, Subscription } from 'umi';
@@ -10,6 +10,7 @@ import { Effect, ImmerReducer, Reducer, Subscription } from 'umi';
 export interface LoginModelState {
   modelVisble: boolean;
   isLogin: boolean;
+  userInfo: any
 }
 export interface LoginModelType {
   namespace: 'Login';
@@ -29,6 +30,7 @@ const LoginModel: LoginModelType = {
   state: {
     modelVisble: false,
     isLogin: false,
+    userInfo: {}
   },
   effects: {
     *query({ payload }, { call, put }) {

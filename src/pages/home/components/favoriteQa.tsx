@@ -2,13 +2,14 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-21 15:11:00
+ * @LastEditTime: 2020-10-09 17:49:55
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
 import './component.less';
 import { Pagination } from 'antd';
-import request from '@/utils/http';
+import { getFavoriteList } from '@/servers/qaHome';
+
 
 interface qaType{
 }
@@ -37,27 +38,59 @@ class FavoriteQa extends Component {
    * @return {type}
    * @Author: 蒋承志
    */
-  getFavoriteList() {
+  async getFavoriteList() {
     this.setState({
       loading: true
     })
-    request.get('/api/common/qaList', {
-      params: {
-        pageIndex: this.state.pageIndex
-      }
-    }).then((res: any) => {
-      this.setState({
-        favoriteList: res.qaList,
-        total: res.total
-      })
-    }).catch( (e: any) => {
-    }).finally (() => {
-      this.setState({
-        loading: false
-      })
+    const data = {
+      docType: '',
+      keyWord: '',
+      orderBy: '1',
+      pageIndex: this.state.pageIndex,
+      pageSize: 10
+    }
+    const res: any = await getFavoriteList(data);
+    const resData: any = res.result;
+    this.setState({
+      loading: false,
+      favoriteList: resData.result,
+      total: resData.total,
     })
   }
-  itemClick(v: any) {
+  itemClick(data: any) {
+    let url = '/detail/lawsRegulations';
+    switch (String(data.docType)) {
+      case '1':
+        url = '/detail/manageStandard';
+        break;
+      case '2':
+        url = '/detail/formProve';
+        break;
+      case '3':
+        url = '/detail/lawsRegulations';
+        break;
+      case '4':
+        url = '/detail/policyExplain';
+        break;
+      case '5':
+        url = '/detail/ratepayingServeStandard';
+        break;
+      case '6':
+        url = '/detail/inspectStandard';
+        break;
+      case '7':
+        url = '/detail/fanLawsRegulations';
+        break;
+      case '8':
+        url = '/detail/referCase';
+        break;
+      case '9':
+        url = '/term/detail';
+        break;
+      default:
+        break;
+    }
+    window.open(`/#${url}?id=${data.docId}&type=${data.docType}${data.docType === '6' ? `&version=${data.docVersion}` : ''}`, '_blank');
   }
   pageChange(v: number) {
     this.setState({
@@ -74,9 +107,9 @@ class FavoriteQa extends Component {
           {
             favoriteList.map((v: any, i: number) => {
               return (
-                <div className="dataItem" key={v.id} onClick={() => this.itemClick(v)}>
+                <div className="dataItem" key={v.docId} onClick={() => this.itemClick(v)}>
                   <div className="ind">{i + (pageIndex - 1) * pageSize + 1}.</div>
-                  <div className="info text-ellipsis">{v.info}</div>
+                  <div className="info text-ellipsis">{v.docName}</div>
                 </div>
               )
             })

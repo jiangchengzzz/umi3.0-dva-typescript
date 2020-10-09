@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-29 18:12:18
+ * @LastEditTime: 2020-10-09 18:27:04
  * @LastEditors: 蒋承志
  */
 import React, { FC } from 'react';
@@ -21,7 +21,7 @@ const QuestionModel: FC<UserModalProps> = (props: UserModalProps) => {
       <div className="contentBox">
         <div className="userAnswer">
           <div className="userInfo">
-            <span>税小悟</span>
+            <span></span>
             <span>{qaData.reqTime}</span>
           </div>
           <div className="infoBox">

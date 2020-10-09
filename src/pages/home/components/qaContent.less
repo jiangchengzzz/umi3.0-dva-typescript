@@ -10,6 +10,30 @@
       font-size: 12px;
       cursor: pointer;
     }
+    .record {
+      background-color: #F9F9F9;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #E6E6E6;
+    }
+  }
+  .qaInfo::-webkit-scrollbar {
+    width: 5px; /*对垂直流动条有效*/
+    height: 5px; /*对水平流动条有效*/
+    background-color: #ffffff;
+  }
+
+  /*定义滚动条的轨道颜色、内阴影及圆角*/
+  .qaInfo::-webkit-scrollbar-track{
+    // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    // background-color: rosybrown;
+    border-radius: 3px;
+  }
+
+  /*定义滑块颜色、内阴影及圆角*/
+  .qaInfo::-webkit-scrollbar-thumb{
+    border-radius: 7px;
+    // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #cdcdcd;
   }
   .label {
     border-top: 1px solid #e6e6e6;

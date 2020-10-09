@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-16 11:37:11
- * @LastEditTime: 2020-09-30 14:18:29
+ * @LastEditTime: 2020-10-09 16:06:30
  * @LastEditors: 蒋承志
  */
 import { defineConfig } from 'umi';
@@ -31,7 +31,7 @@ export default defineConfig({
   },
   proxy: {
     '/api': {
-      target: 'http://10.8.0.126:8081/portal',
+      target: 'http://10.8.0.51:8081/',
       pathRewrite: { '^/api': '' },
       changeOrigin: true
     }

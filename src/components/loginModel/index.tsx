@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 登录model 可以直接用modelVisble控制显示隐藏，但是想试试控制状态组件中的状态来改变页面，因为
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-29 14:36:24
+ * @LastEditTime: 2020-10-09 16:11:00
  * @LastEditors: 蒋承志
  */
 // import React, {Component} from 'react';
@@ -155,16 +155,16 @@ class LoginModel extends Component<LoginModelProps> {
   getUserInfo() {
     userInfo()
     .then((res: any) => {
-      handleWebStorage.setLocalData('araeCodeData', res);
+      handleWebStorage.setLocalData('araeCodeData', res.result);
     })
     userBaseInfo()
     .then((res: any) => {
-      handleWebStorage.setLocalData('personalBaseData', res);
+      handleWebStorage.setLocalData('personalBaseData', res.result);
     })
     getPermission()
     .then((res: any) => {
-      handleWebStorage.setLocalData('menuList', res.menuList)
-      handleWebStorage.setLocalData('functionList', res.functionList)
+      handleWebStorage.setLocalData('menuList', res.result.menuList)
+      handleWebStorage.setLocalData('functionList', res.result.functionList)
     })
   }
   /**
