@@ -2,17 +2,19 @@
  * @Author: 蒋承志
  * @Description: 问答内容
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-09 17:06:24
+ * @LastEditTime: 2020-10-10 17:58:16
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
 import './qaContent.less';
 import request from '@/utils/http';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import E from 'wangeditor';
-import { getQa, getLabel, getQaType, getQaDetail, getRecord } from '@/servers/qaHome';
+import { getQa, getLabel, getQaType, getQaDetail, getRecord, confirmSocket } from '@/servers/qaHome';
 import AnswerModel from './answerModel';
-import QuestionModel from './questionModel'
+import QuestionModel from './questionModel';
+import PersonServerAnswerModel from './personServerAnswerModel';
+import http from '@/utils/http';
 
 interface qaInfo{
   docId: string,
@@ -24,6 +26,7 @@ interface QaContentProps{
   qaInfo: qaInfo,
   resetType: Function
 }
+let isSocket: any = null;
 let editor: any;
 class QaContent extends Component<QaContentProps> {
   constructor(props: QaContentProps){
@@ -37,13 +40,16 @@ class QaContent extends Component<QaContentProps> {
     actQaId: '',
     recordList: [],
     havaRecord: '1', // 1：开始第一次，2：有且没有更多 3： 有更多
+    isPersonServer: false,
+    psList: []
   }
   componentDidMount() {
     this.initEditor();
     this.getLabel('');
     this.getQaType('');
     this.getRecord('');
-    // this.getQaChatList();
+    // this.startSocket();
+    console.log('process.env.envType :>> ', process.env.envType);
   }
   componentWillReceiveProps(nextProps: any) {
     if (nextProps.actQaType !== this.props.actQaType) {
@@ -55,6 +61,60 @@ class QaContent extends Component<QaContentProps> {
     if (nextProps.qaInfo.docId !== this.props.qaInfo.docId) {
       this.getQaDetail(nextProps.qaInfo)
     }
+  }
+  goPerson() {
+    message.info('已开启人工服务')
+    this.setState({
+      isPersonServer: true
+    }, () => {
+      this.startSocket();
+    })
+  }
+  async startSocket() {
+    const num: number = new Date().getTime();
+    isSocket = new WebSocket(`ws://kf.im.sxw.com:9595/app/3331333731383036?client=sxw&identity=${num}`);
+    isSocket.onopen = () => {
+      // Web Socket 已连接上，使用 send() 方法发送数据
+      console.log("数据发送中...");
+    };
+    isSocket.onmessage =  (evt: any) =>
+    {
+      const data = JSON.parse(evt.data)
+      if (data.event === 'sxw-msg') {
+        console.log('data123 :>> ', data);
+        const resData: any = {
+          dialogId: String(new Date().getTime()),
+          state: 2,
+          reqTime: data.data.dateTime,
+          question: data.data.content,
+          detailType: data.data.contentType
+        }
+        this.setState({
+          psList: [...this.state.psList, resData]
+        })
+      }
+    };
+    // isSocket.onclose = function()
+    // {
+    //   // 关闭 websocket
+    //   console.log("连接已关闭...");
+    // };
+    // 确认
+    const res = await confirmSocket(num);
+    console.log('res :>> ', res);
+  }
+  inputSocket(data: string) {
+    const resData: any = {
+      dialogId: String(new Date().getTime()),
+      state: 1,
+      reqTime: new Date().getTime(),
+      question: data,
+      detailType: ''
+    }
+    this.setState({
+      psList: [...this.state.psList, resData]
+    })
+    isSocket.send(data);
   }
   async getQaType(type: string) {
     const data = {
@@ -72,12 +132,9 @@ class QaContent extends Component<QaContentProps> {
     const data = {
       nodeId: label ? label.nodeId : '',
       preDialogId: this.state.actQaId,
-      // question: editor.txt.text(),
       question: q,
-      // question: '个人所得税法',
       type: this.props.actQaType
     }
-    editor.txt.html('');
     const res: any = await getQa(data);
     const resData: any = res.result;
     this.setState({
@@ -165,7 +222,11 @@ class QaContent extends Component<QaContentProps> {
     })
   }
   labelClick(label: any) {
-    this.getQaChatList(label.nodeName)
+    if (this.state.isPersonServer) {
+      this.inputSocket(label.nodeName);
+    } else {
+      this.getQaChatList(label.nodeName)
+    }
   }
   showRecord() {
     if (this.state.havaRecord === '1') {
@@ -178,18 +239,41 @@ class QaContent extends Component<QaContentProps> {
     }
   }
   closeChat() {
-    this.setState({
-      labelScreenVal: '',
-      labelList: [],
-      qaList: [],
-      actQaId: '',
-      recordList: [],
-      havaRecord: '1'
-    });
+    if (this.state.isPersonServer) {
+      isSocket.onclose = () =>
+      {
+        // 关闭 websocket
+        message.info('已关闭人工服务')
+      };
+      this.setState({
+        isPersonServer: false
+      });
+    } else {
+      this.setState({
+        labelScreenVal: '',
+        labelList: [],
+        qaList: [],
+        actQaId: '',
+        recordList: [],
+        havaRecord: '1',
+        isPersonServer: false,
+        psList: []
+      }, () => {
+        this.getLabel('');
+        this.getQaType('');
+        this.getRecord('');
+      });
+    }
+
     this.props.resetType();
   }
   submit() {
-    this.getQaChatList(editor.txt.text());
+    if (this.state.isPersonServer) {
+      this.inputSocket(editor.txt.text());
+    } else {
+      this.getQaChatList(editor.txt.text());
+    }
+    editor.txt.html('');
   }
   async getRecord(dialogId: string){
     const data = {
@@ -213,49 +297,69 @@ class QaContent extends Component<QaContentProps> {
     })
   }
   render() {
-    const { labelList, qaList, recordList, havaRecord } : any = this.state
+    const { labelList, qaList, recordList, havaRecord, psList } : any = this.state
     return (
       <div className="qaContent">
         <div className="qaInfo" ref={(el) => { this.qaBoxCon = el; }}>
-          <div className="qaList">
-            {
-              havaRecord === '0' ?
-                null
-              :
-                <div className="record">
-                  {
-                    havaRecord !== '3' ?
-                    <div className="showMoreRecord">
-                      <span  onClick={() => this.showRecord()}>点击加载更多记录</span>
-                    </div>
-                    : null
-                  }
-                  {
-                    havaRecord !== '1' ?
-                      recordList.map((v: any) => {
-                        return <div style={{pointerEvents: 'none'}} key={v.dialogId}>
-                          {
-                            v.state !== 99 && <QuestionModel loginState={this.props.loginState} qaData={v} />
-                          }
-                          <AnswerModel loginState={this.props.loginState} actQaType={this.props.actQaType} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
+          {
+            !this.state.isPersonServer ?
+              <div className="qaList">
+                {
+                  havaRecord === '0' ?
+                    null
+                  :
+                    <div className="record">
+                      {
+                        havaRecord !== '3' ?
+                        <div className="showMoreRecord">
+                          <span  onClick={() => this.showRecord()}>点击加载更多记录</span>
                         </div>
-                      })
-                    : null
-                  }
-                </div>
-            }
-            {
-              qaList.length > 0 &&
-              qaList.map((v: any) => {
-                return <div key={v.dialogId}>
-                  {
-                    v.state !== 99 && <QuestionModel loginState={this.props.loginState} qaData={v} />
-                  }
-                  <AnswerModel loginState={this.props.loginState} actQaType={this.props.actQaType} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
-                </div>
-              })
-            }
-          </div>
+                        : null
+                      }
+                      {
+                        havaRecord !== '1' ?
+                          recordList.map((v: any) => {
+                            return <div style={{pointerEvents: 'none'}} key={v.dialogId}>
+                              {
+                                v.state !== 99 && <QuestionModel loginState={this.props.loginState} qaData={v} />
+                              }
+                              <AnswerModel loginState={this.props.loginState} actQaType={this.props.actQaType} qaData={v} goPerson={this.goPerson.bind(this)} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
+                            </div>
+                          })
+                        : null
+                      }
+                    </div>
+                }
+                {
+                  qaList.length > 0 &&
+                  qaList.map((v: any) => {
+                    return <div key={v.dialogId}>
+                      {
+                        v.state !== 99 && <QuestionModel loginState={this.props.loginState} qaData={v} />
+                      }
+                      <AnswerModel loginState={this.props.loginState} actQaType={this.props.actQaType} goPerson={this.goPerson.bind(this)} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
+                    </div>
+                  })
+                }
+              </div>
+             :
+              <div className="qaList">
+                {
+                  psList.length > 0 &&
+                  psList.map((v: any) => {
+                    return <div key={v.dialogId}>
+                      {
+                        v.state === 1 && <QuestionModel loginState={this.props.loginState} qaData={v} />
+                      }
+                      {
+                        v.state === 2 && <PersonServerAnswerModel loginState={this.props.loginState} qaData={v} />
+                      }
+                    </div>
+                  })
+                }
+              </div>
+          }
+
         </div>
         <div className="label">
           <div className="title">我想咨询：</div>

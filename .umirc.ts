@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-16 11:37:11
- * @LastEditTime: 2020-10-09 16:06:30
+ * @LastEditTime: 2020-10-10 15:26:10
  * @LastEditors: 蒋承志
  */
 import { defineConfig } from 'umi';
@@ -29,10 +29,21 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  base: '/qa/',
   proxy: {
-    '/api': {
-      target: 'http://10.8.0.51:8081/',
-      pathRewrite: { '^/api': '' },
+    '/portal': {
+      target: 'http://10.8.0.51:8081/portal',
+      pathRewrite: { '^/portal': '' },
+      changeOrigin: true
+    },
+    '/auth': {
+      target: 'http://10.8.0.51:8081/auth',
+      pathRewrite: { '^/auth': '' },
+      changeOrigin: true
+    },
+    '/test': {
+      target: 'http://kf.im.sxw.com/',
+      pathRewrite: { '^/test': '' },
       changeOrigin: true
     }
   },

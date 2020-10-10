@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-09 18:26:48
+ * @LastEditTime: 2020-10-10 12:27:55
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -18,6 +18,7 @@ interface UserModalProps {
   loginState: boolean;
   qaDetail: Function;
   actQaType: string;
+  goPerson: Function
 }
 class AnswerModel extends Component<UserModalProps> {
   constructor(props: UserModalProps){
@@ -166,7 +167,7 @@ class AnswerModel extends Component<UserModalProps> {
                           v.content.map((val: any, i: number) => {
                             if (i < 2) {
                               return (
-                                <div key={val.id} onClick={() => this.relationClick(val)} className="docItem">{ `${val.dispatchUnit} ${val.dirNum} ${val.name}（${val.writNo}）` }</div>
+                                <div key={val.id} onClick={() => this.relationClick(val)} className="docItem">{ `${val.dispatchUnit} ${val.dirNum} ${val.name} ${val.writNo ? `（${val.writNo}）`: ''}` }</div>
                               )
                             }
                           })
@@ -311,7 +312,7 @@ class AnswerModel extends Component<UserModalProps> {
           qaData.state === 0 || this.state.solveStatus === false ?
           <div className="manualService">
             <div className="content">
-              <span className="warningImg"></span>问题未解决？我要<span className="serviceBth">转人工客服</span>
+              <span className="warningImg"></span>问题未解决？我要<span className="serviceBth" onClick={() => this.props.goPerson()}>转人工客服</span>
             </div>
           </div> : null
         }
