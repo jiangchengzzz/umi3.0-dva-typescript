@@ -3,7 +3,7 @@
  * @Author: 王小杰
  * @Date: 2019-08-08 15:02:27
  * @LastEditors: 蒋承志
- * @LastEditTime: 2020-09-27 11:11:29
+ * @LastEditTime: 2020-10-12 19:03:22
  */
 
 export const decideType = {
@@ -93,7 +93,13 @@ export const handleDate = {
     return new Date().getDate();
   },
 
-  // 时间格式化
+  /**
+   * @Description: file content
+   * @params: time 例如传入 new Date（）
+   * @params: fmt 例如传入 yyyy-mm-dd HH:MM
+   * @return {type}
+   * @Author: 蒋承志
+   */
   dateFormat: (time: any, fmt: string) => {
     if (!time) {
       return '';

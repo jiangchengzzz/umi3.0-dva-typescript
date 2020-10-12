@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import 'antd/dist/antd.css';
 import './index.less';
-import { Tabs, message } from 'antd';
-import { AppleOutlined, AndroidOutlined } from '@ant-design/icons';
+import { Tabs, message, Modal } from 'antd';
+import { ExclamationCircleOutlined  } from '@ant-design/icons';
 import CommonQa from './components/commonQa';
 import CorrelationCase from './components/correlationCase';
 import FavoriteQa from './components/favoriteQa';
@@ -10,7 +10,7 @@ import QaContent from './components/qaContent';
 import { LoginModelState, connect, Dispatch } from 'umi'
 
 const { TabPane } = Tabs;
-
+const { confirm } = Modal;
 interface HomeProps{
   Login: LoginModelState,
   dispatch: Dispatch
@@ -116,7 +116,6 @@ class Home extends Component<HomeProps> {
   }
   componentWillMount() {
     // 组件挂载到DOM前调用
-    console.log('this.props.login :>> ', this.props.Login);
   }
   componentWillReceiveProps(nextProps: any) {
     if (nextProps.Login.isLogin !== this.props.Login.isLogin) {
@@ -154,33 +153,57 @@ class Home extends Component<HomeProps> {
   }
   entranceClick(type: string) {
     let url = '';
-    switch (type) {
-      case '2':
-        url = '/search/formProve';
-        break;
-      case '50':
-        url = '';
-        message.info('暂时不支持跳转')
-        break;
-      case '51':
-        url = '';
-        message.info('暂时不支持跳转')
-        break;
-      case '52':
-        url = '';
-        message.info('暂时不支持跳转')
-        break;
-      case '53':
-        url = '';
-        message.info('暂时不支持跳转')
-        break;
-      case '3':
-        url = '/search/lawsRegulations';
-        break;
+    if (this.props.Login.isLogin) {
+      switch (type) {
+        case '2':
+          url = '/search/formProve';
+          break;
+        case '50':
+          url = '';
+          message.info('暂时不支持跳转')
+          break;
+        case '51':
+          url = '';
+          message.info('暂时不支持跳转')
+          break;
+        case '52':
+          url = '';
+          message.info('暂时不支持跳转')
+          break;
+        case '53':
+          url = '';
+          message.info('暂时不支持跳转')
+          break;
+        case '3':
+          url = '/search/lawsRegulations';
+          break;
+      }
+      if (url) {
+        window.open(`/#${url}`, '_blank');
+      }
+    } else {
+      this.confirmLogin();
     }
-    if (url) {
-      window.open(`/#${url}`, '_blank');
-    }
+  }
+  confirmLogin() {
+    const _this = this
+    confirm({
+      title: '需要登录才能跳转税悟查看更多信息',
+      icon: <ExclamationCircleOutlined />,
+      content: '是否去登陆？',
+      okText: '去登陆',
+      cancelText: '取消',
+      onOk() {
+        _this.props.dispatch({
+          type: 'Login/changeVisble',
+          payload: {
+            modelVisble: !_this.props.Login.modelVisble
+          }
+        })
+      },
+      onCancel() {
+      },
+    });
   }
   render() {
     const { typeList, actTabs, actQaType } = this.state;
@@ -212,7 +235,7 @@ class Home extends Component<HomeProps> {
           </div>
         </div>
         <div className="qaContentBox">
-          <QaContent actQaType={actQaType} resetType={this.resetState.bind(this)} qaInfo={this.state.qaInfo} loginState={this.props.Login.isLogin} />
+          <QaContent actQaType={actQaType} resetType={this.resetState.bind(this)} qaInfo={this.state.qaInfo} loginState={this.props.Login.isLogin} confirmLogin={this.confirmLogin.bind(this)} />
         </div>
         <div className="qaOther">
           <div className="recommend">
@@ -253,7 +276,7 @@ class Home extends Component<HomeProps> {
               }
               key="3"
             >
-              <CorrelationCase loginState={this.props.Login.isLogin} />
+              <CorrelationCase confirmLogin={this.confirmLogin.bind(this)} loginState={this.props.Login.isLogin} />
             </TabPane>
           </Tabs>
           </div>

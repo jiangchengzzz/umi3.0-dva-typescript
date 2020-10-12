@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 登录model 这个是用来测试无状态组件中dva的应用，与交互
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-09-25 15:27:51
+ * @LastEditTime: 2020-10-12 20:38:48
  * @LastEditors: 蒋承志
  */
 // import React, {Component} from 'react';
@@ -27,64 +27,3 @@ const mapStateToProps = ({ Login } : { Login: LoginModelState }) => {
   }
 }
 export default connect(mapStateToProps)(LoginModelTest)
-// class LoginModel extends Component<LoginModelProps> {
-//   constructor(props: LoginModelProps){
-//     super(props)
-//   }
-//   state = {
-//     visible: false
-//   }
-//   componentDidMount() {
-//     // this.props.dispatch({
-//     //   type:'user/getCodeSrc'
-//     // })
-//     console.log('123123 :>> ', 123123);
-//   }
-//   componentWillReceiveProps(nextProps: any) {
-//   }
-//   showLoginModal() {
-//     this.setState({
-//       visible: true,
-//     });
-//   };
-//   // getQaChatList() {
-//   //   http.get('/api/qaChatList', {
-//   //     params: {
-//   //       value: this.state.labelScreenVal
-//   //     }
-//   //   }).then((res: any) => {
-//   //     this.setState({
-//   //       labelList: res.labelList
-//   //     })
-//   //   }).catch( (e: any) => {
-//   //   })
-//   // }
-//   handleOk (e: any){
-//     console.log(e);
-//     this.setState({
-//       visible: false,
-//     });
-//   };
-
-//   handleCancel (e: any){
-//     console.log(e);
-//     this.setState({
-//       visible: false,
-//     });
-//   };
-
-//   render() {
-//     const { labelList } : any = this.state
-//     return (
-//       <Modal
-//         title="Basic Modal"
-//         visible={this.state.visible}
-//         onOk={this.handleOk}
-//         onCancel={this.handleCancel}
-//       >
-//         dsafasf
-//       </Modal>
-//     );
-//   }
-// }
-// export default LoginModel;

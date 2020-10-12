@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-12 16:32:25
+ * @LastEditTime: 2020-10-12 20:00:08
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -18,7 +18,8 @@ interface UserModalProps {
   loginState: boolean;
   qaDetail: Function;
   actQaType: string;
-  goPerson: Function
+  goPerson: Function,
+  confirmLogin: Function
 }
 class AnswerModel extends Component<UserModalProps> {
   constructor(props: UserModalProps){
@@ -35,7 +36,6 @@ class AnswerModel extends Component<UserModalProps> {
     const con = this.conBox.current;
     if (con) {
       if (this.state.showUpload === false) {
-        console.log('con[0].clientHeight :>> ', con.clientHeight);
         if (con.clientHeight > 80) {
           this.setState({
             showUpload: true
@@ -55,7 +55,6 @@ class AnswerModel extends Component<UserModalProps> {
     this.props.getQa(label.nodeName, label);
   }
   relationClick(val: any) {
-    console.log('val :>> ', val);
     if(this.props.loginState) {
       let url = '/detail/lawsRegulations';
       switch (String(val.docType)) {
@@ -91,14 +90,13 @@ class AnswerModel extends Component<UserModalProps> {
       }
       window.open(`/#${url}?id=${val.docId}&type=${val.docType}${val.docType === '6' ? `&version=${val.docVersion}` : ''}`, '_blank');
     } else {
-      message.success('登录后才能跳转到相关资料');
+      this.props.confirmLogin();
     }
   }
   otherIink(link: string) {
     window.open(link, '_blank');
   }
   blclLink(item: any) {
-    console.log('link :>> ', item);
   }
   selAnswerState(qaData: any) {
     if (qaData.state === 0) {
@@ -114,52 +112,54 @@ class AnswerModel extends Component<UserModalProps> {
           <div className="answerName">{qaData.answer.docName}</div>
           <div className="answerContent">
             <div className={this.state.upload ? "answerContentBox upload": "answerContentBox"}>
-              {
-                qaData.answer.docType === 2 ?
-                <div className="formImgBox">
-                  {
-                    qaData.answer.formImage.map((val: any, i: number) => {
-                      return (
-                        <div key={i} className="formImg">
-                          <img src={val} alt=""/>
-                          {/* <img src={require('../../../assets/images/formImg.png')} alt=""/> */}
-                        </div>
-                      )
-                    })
-                  }
-                  <div className="imgTitle">
-                    填表说明：
-                  </div>
-                </div>
-                : null
-              }
-              {
-                qaData.answer.flowImgPath &&
-                <div className="flowImg">
-                  <img src={qaData.answer.flowImgPath} alt=""/>
-                </div>
-              }
-              <div className="contentAll" ref={this.conBox }>
-                <div className="contentHtml" dangerouslySetInnerHTML={{__html: qaData.answer.fullHtml}}>
-                </div>
+              <div ref={this.conBox }>
                 {
-                  qaData.answer.blclxxList.length >0 &&
-                  <div className="blcl">
-                    <div className="processTitle">准备材料</div>
-                    <div className="blclList">
-                      {
-                        qaData.answer.blclxxList.map((v: any, i: number) => {
-                          return (
-                            v.id ?
-                            <div key={i} className="blclLink blcItem" onClick={() => this.blclLink(v)}>{v.clMc}</div>
-                            :
-                            <div key={i} className="blcItem">{v.clMc}</div>
-                          )
-                        })
-                      }
+                  qaData.answer.docType === 2 ?
+                  <div className="formImgBox">
+                    {
+                      qaData.answer.formImage.map((val: any, i: number) => {
+                        return (
+                          <div key={i} className="formImg">
+                            <img src={val} alt=""/>
+                            {/* <img src={require('../../../assets/images/formImg.png')} alt=""/> */}
+                          </div>
+                        )
+                      })
+                    }
+                    <div className="imgTitle">
+                      填表说明：
                     </div>
                   </div>
+                  : null
                 }
+                {
+                  qaData.answer.flowImgPath &&
+                  <div className="flowImg">
+                    <img src={qaData.answer.flowImgPath} alt=""/>
+                  </div>
+                }
+                <div className="contentAll">
+                  <div className="contentHtml" dangerouslySetInnerHTML={{__html: qaData.answer.fullHtml}}>
+                  </div>
+                  {
+                    qaData.answer.blclxxList.length >0 &&
+                    <div className="blcl">
+                      <div className="processTitle">准备材料</div>
+                      <div className="blclList">
+                        {
+                          qaData.answer.blclxxList.map((v: any, i: number) => {
+                            return (
+                              v.id ?
+                              <div key={i} className="blclLink blcItem" onClick={() => this.blclLink(v)}>{v.clMc}</div>
+                              :
+                              <div key={i} className="blcItem">{v.clMc}</div>
+                            )
+                          })
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
               </div>
             </div>
             {
@@ -257,6 +257,12 @@ class AnswerModel extends Component<UserModalProps> {
               }
             </div>
           </div>
+          {
+            !this.props.loginState &&
+            <div className="guideLogin">
+              如需获取更好的服务，请 <span onClick={() => this.props.confirmLogin()} className="goLogin">登录</span> "税悟"
+            </div>
+          }
         </div>
       )
     }
@@ -321,9 +327,6 @@ class AnswerModel extends Component<UserModalProps> {
                 <div className={ this.state.solveStatus === false || qaData.solved === false ? 'img active' : 'img' }></div>
                 <div className="text">未解决</div>
               </div>
-              {
-                console.log('this.props', this.props)
-              }
               {
                 this.props.loginState && (String(this.props.qaData.answer.docType) === '3' || String(this.props.qaData.answer.docType) === '2') ?
                 <div className={ this.state.isFavorite === false ? 'otherItem favorite' : 'otherItem favorite active' } onClick={() => this.setFavorite(this.props.qaData.answer.docId)}>

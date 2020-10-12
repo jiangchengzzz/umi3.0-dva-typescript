@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 问答内容
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-12 17:35:49
+ * @LastEditTime: 2020-10-12 20:35:21
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
@@ -15,6 +15,7 @@ import AnswerModel from './answerModel';
 import QuestionModel from './questionModel';
 import PersonServerAnswerModel from './personServerAnswerModel';
 import http from '@/utils/http';
+import { handleDate } from '@/utils/base';
 
 /**
  * @Description: 空值判断函数
@@ -22,7 +23,6 @@ import http from '@/utils/http';
  * @Author: 蒋承志
  */
 function checkVal(str: string) {
-  console.log('str.length :>> ', str.length);
   let num = 0,
   reg = /<p>(&nbsp;|&nbsp;\s+)+<\/p>|<p>(<br>)+<\/p>/g;
   while (num < str.length && str != '')
@@ -33,7 +33,7 @@ function checkVal(str: string) {
       str = str.replace(k[0], '');
     }
   }
-  return str === '';
+  return str.length !== 0;
 }
 interface qaInfo{
   docId: string,
@@ -43,7 +43,8 @@ interface QaContentProps{
   actQaType: string,
   loginState: boolean,
   qaInfo: qaInfo,
-  resetType: Function
+  resetType: Function,
+  confirmLogin: Function
 }
 let isSocket: any = null;
 let editor: any;
@@ -67,8 +68,6 @@ class QaContent extends Component<QaContentProps> {
     this.getLabel('');
     this.getQaType('');
     this.getRecord('');
-    // this.startSocket();
-    console.log('process.env.envType :>> ', process.env.envType);
   }
   componentWillReceiveProps(nextProps: any) {
     if (nextProps.actQaType !== this.props.actQaType) {
@@ -132,7 +131,6 @@ class QaContent extends Component<QaContentProps> {
     // isSocket.onclose = function()
     // {
     //   // 关闭 websocket
-    //   console.log("连接已关闭...");
     // };
     // 确认
     const res = await confirmSocket(num);
@@ -141,7 +139,7 @@ class QaContent extends Component<QaContentProps> {
     const resData: any = {
       dialogId: String(new Date().getTime()),
       state: 1,
-      reqTime: new Date().getTime(),
+      reqTime: handleDate.dateFormat(new Date(), 'yyyy-mm-dd HH:MM'),
       question: data,
       detailType: ''
     }
@@ -195,7 +193,6 @@ class QaContent extends Component<QaContentProps> {
     })
   }
   scrollBottom() {
-    console.log('this.messagesEnd :>> ', this.qaBoxCon);
     if (this.qaBoxCon) {
       const scrollHeight = this.qaBoxCon.scrollHeight;//里面div的实际高度  2000px
       const height = this.qaBoxCon.clientHeight;  //网页可见高度  200px
@@ -222,7 +219,7 @@ class QaContent extends Component<QaContentProps> {
     }
     editor.customConfig.menus = [
       'emoticon',  // 表情
-      'image',  // 插入图片
+      // 'image',  // 插入图片
     ];
     editor.customConfig.emotions = [
       {
@@ -302,12 +299,11 @@ class QaContent extends Component<QaContentProps> {
     this.props.resetType();
   }
   submit() {
-    console.log('editor.txt.html() :>> ', editor.txt.html());
-    if (editor.txt.html()) {
+    if (checkVal(editor.txt.html())) {
       if (this.state.isPersonServer) {
         this.inputSocket(editor.txt.html());
       } else {
-        this.getQaChatList(editor.txt.text());
+        this.getQaChatList(editor.txt.html());
       }
       editor.txt.html('');
     } else {
@@ -362,7 +358,7 @@ class QaContent extends Component<QaContentProps> {
                               {
                                 v.state !== 99 && <QuestionModel loginState={this.props.loginState} qaData={v} />
                               }
-                              <AnswerModel loginState={this.props.loginState} actQaType={this.props.actQaType} qaData={v} goPerson={this.goPerson.bind(this)} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
+                              <AnswerModel loginState={this.props.loginState} actQaType={this.props.actQaType} qaData={v} goPerson={this.goPerson.bind(this)} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} confirmLogin={() => this.props.confirmLogin()} />
                             </div>
                           })
                         : null
@@ -376,7 +372,7 @@ class QaContent extends Component<QaContentProps> {
                       {
                         v.state !== 99 && <QuestionModel loginState={this.props.loginState} qaData={v} />
                       }
-                      <AnswerModel loginState={this.props.loginState} actQaType={this.props.actQaType} goPerson={this.goPerson.bind(this)} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} />
+                      <AnswerModel loginState={this.props.loginState} actQaType={this.props.actQaType} goPerson={this.goPerson.bind(this)} qaData={v} qaDetail={this.getQaDetail.bind(this)} getQa={this.getQaChatList.bind(this)} confirmLogin={() => this.props.confirmLogin()} />
                     </div>
                   })
                 }
@@ -428,7 +424,14 @@ class QaContent extends Component<QaContentProps> {
           </div>
           <div className="sub">
             <div className="close">
-              <Button onClick={() => this.closeChat()}>关闭会话</Button>
+              <Button onClick={() => this.closeChat()}>
+                {
+                  this.state.isPersonServer ?
+                  <span>结束人工咨询</span>
+                  :
+                  <span>关闭会话</span>
+                }
+              </Button>
             </div>
             <div className="submit">
               <Button type="primary" onClick={() => this.submit()}>发送</Button>

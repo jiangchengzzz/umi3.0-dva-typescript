@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 封装的请求
  * @Date: 2020-09-21 11:16:42
- * @LastEditTime: 2020-09-27 11:17:00
+ * @LastEditTime: 2020-10-12 20:37:59
  * @LastEditors: 蒋承志
  */
 import { extend, RequestOptionsInit } from 'umi-request';
@@ -75,7 +75,6 @@ http.interceptors.request.use((url, options: RequestOptionsInit) => {
   // }
   // options.headers = Object.assign({}, options.headers, {"x-csrf-token":getCookie("csrfToken")})
   options.headers = Object.assign({}, options.headers)
-  console.log('url', url)
   return {
     url,
     options,
@@ -107,7 +106,6 @@ http.interceptors.response.use(async (response: any) => {
     //   });
     //   return false
     // }
-    // console.log('data', data.data)
     // return  data.data;
   } else {
     notification.error({

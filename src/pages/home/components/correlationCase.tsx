@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 常见问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-09 18:08:01
+ * @LastEditTime: 2020-10-12 19:37:17
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
@@ -13,7 +13,8 @@ import { getCase } from '@/servers/qaHome';
 
 
 interface CorrelationCaseProps{
-  loginState: boolean
+  loginState: boolean,
+  confirmLogin: Function
 }
 
 class CorrelationCase extends Component<CorrelationCaseProps> {
@@ -49,7 +50,6 @@ class CorrelationCase extends Component<CorrelationCaseProps> {
       pageSize: this.state.pageSize
     };
     const res = await getCase(data);
-    console.log('res :>> ', res);
     this.setState({
       caseList: res.result.result,
       total: res.result.total,
@@ -58,11 +58,10 @@ class CorrelationCase extends Component<CorrelationCaseProps> {
   }
 
   itemClick(v: any) {
-    console.log('v :>> ', v);
     if(this.props.loginState) {
       window.open(`/#/detail/referCase?id=${v.docId}&type=${v.docType}`, '_blank');
     } else {
-      message.success('登录后才能跳转到相关案例');
+      this.props.confirmLogin();
     }
   }
   pageChange(v: number) {

@@ -41,16 +41,7 @@ class BasicLayout extends Component<LayoutProps> {
       <Layout className="layoutBox">
         <Header className="header-box" style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
           <div className="header-content">
-            <div className="logoBox" onClick={
-              () => {
-                this.props.dispatch({
-                  type: 'Login/changeVisble',
-                  payload: {
-                    modelVisble: !this.props.Login.modelVisble
-                  }
-                })
-              }
-            }>
+            <div className="logoBox">
                 <div className="logo"></div>
                 <div className="line"></div>
                 <div className="text">税悟不懂问小悟</div>
@@ -76,7 +67,7 @@ class BasicLayout extends Component<LayoutProps> {
                         {/* <img src={'https://upload-images.jianshu.io/upload_images/3706166-920b4e5bd63329ae.jpeg?imageMogr2/auto-orient/strip|imageView2/2/w/960/format/webp'} alt=""/> */}
                         {/* <img src={require(this.props.Login.userInfo.avatar)} alt=""/> */}
                       </div>
-                      <span>{this.props.Login.userInfo.userName}</span>
+                      {/* <span>{this.props.Login.userInfo.userName}</span> */}
                     </div>
                   :
                     <div className="userInfo">
