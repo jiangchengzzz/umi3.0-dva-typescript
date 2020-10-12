@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-09 18:27:04
+ * @LastEditTime: 2020-10-12 15:06:50
  * @LastEditors: 蒋承志
  */
 import React, { FC } from 'react';
@@ -24,10 +24,7 @@ const QuestionModel: FC<UserModalProps> = (props: UserModalProps) => {
             <span></span>
             <span>{qaData.reqTime}</span>
           </div>
-          <div className="infoBox">
-            {
-              qaData.question
-            }
+          <div className="infoBox" dangerouslySetInnerHTML={{__html: qaData.question}}>
           </div>
         </div>
         <div className="userImg"></div>

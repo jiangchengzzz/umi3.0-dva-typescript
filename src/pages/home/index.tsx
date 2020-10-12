@@ -27,11 +27,11 @@ class Home extends Component<HomeProps> {
         typeId: '99999',
         active: true
       },
-      {
-        name: '办税事项',
-        typeId: '0',
-        active: false
-      },
+      // {
+      //   name: '办税事项',
+      //   typeId: '0',
+      //   active: false
+      // },
       {
         name: '办税表单',
         active: false,
@@ -58,7 +58,7 @@ class Home extends Component<HomeProps> {
         active: false
       }
     ],
-    actQaType: '1',
+    actQaType: '99999',
     actTabs: '1',
     isLogin: false,
     qaInfo: {
@@ -105,7 +105,7 @@ class Home extends Component<HomeProps> {
           active: false
         }
       ],
-      actQaType: '1',
+      actQaType: '99999',
       actTabs: '1',
       isLogin: false,
       qaInfo: {

@@ -95,7 +95,7 @@ export const setFavoriteCancel = async (data: any) => {
 }
 // 确认连接
 export const confirmSocket = async (data: any) => {
-  return http(`/test/api/sxw/dialservice?identity=${data}&nickName={nickName}`, {
+  return http(`/api/sxw/dialservice?identity=${data}&nickName={nickName}`, {
     method: 'get',
     data: {}
   })

@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-16 11:37:11
- * @LastEditTime: 2020-10-10 15:26:10
+ * @LastEditTime: 2020-10-12 17:37:10
  * @LastEditors: 蒋承志
  */
 import { defineConfig } from 'umi';
@@ -41,9 +41,9 @@ export default defineConfig({
       pathRewrite: { '^/auth': '' },
       changeOrigin: true
     },
-    '/test': {
-      target: 'http://kf.im.sxw.com/',
-      pathRewrite: { '^/test': '' },
+    '/api': {
+      target: 'http://kf.im.sxw.com/api',
+      pathRewrite: { '^/api': '' },
       changeOrigin: true
     }
   },

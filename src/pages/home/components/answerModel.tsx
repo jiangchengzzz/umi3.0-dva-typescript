@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-10 12:27:55
+ * @LastEditTime: 2020-10-12 16:32:25
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -52,7 +52,7 @@ class AnswerModel extends Component<UserModalProps> {
     })
   }
   labelClick(label: any) {
-    this.props.getQa('', label)
+    this.props.getQa(label.nodeName, label);
   }
   relationClick(val: any) {
     console.log('val :>> ', val);
@@ -97,6 +97,9 @@ class AnswerModel extends Component<UserModalProps> {
   otherIink(link: string) {
     window.open(link, '_blank');
   }
+  blclLink(item: any) {
+    console.log('link :>> ', item);
+  }
   selAnswerState(qaData: any) {
     if (qaData.state === 0) {
       return (
@@ -130,10 +133,34 @@ class AnswerModel extends Component<UserModalProps> {
                 </div>
                 : null
               }
-              {/* {
-                <ContentHtml qaData={qaData} />
-              } */}
-              <div className="contentHtml" ref={this.conBox } dangerouslySetInnerHTML={{__html: qaData.answer.fullHtml}}></div>
+              {
+                qaData.answer.flowImgPath &&
+                <div className="flowImg">
+                  <img src={qaData.answer.flowImgPath} alt=""/>
+                </div>
+              }
+              <div className="contentAll" ref={this.conBox }>
+                <div className="contentHtml" dangerouslySetInnerHTML={{__html: qaData.answer.fullHtml}}>
+                </div>
+                {
+                  qaData.answer.blclxxList.length >0 &&
+                  <div className="blcl">
+                    <div className="processTitle">准备材料</div>
+                    <div className="blclList">
+                      {
+                        qaData.answer.blclxxList.map((v: any, i: number) => {
+                          return (
+                            v.id ?
+                            <div key={i} className="blclLink blcItem" onClick={() => this.blclLink(v)}>{v.clMc}</div>
+                            :
+                            <div key={i} className="blcItem">{v.clMc}</div>
+                          )
+                        })
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
             </div>
             {
               this.state.showUpload && <div className="upload">
@@ -298,7 +325,7 @@ class AnswerModel extends Component<UserModalProps> {
                 console.log('this.props', this.props)
               }
               {
-                this.props.loginState && (String(this.props.qaData.answer.docType) === '3' || String(this.props.actQaType) === '2') ?
+                this.props.loginState && (String(this.props.qaData.answer.docType) === '3' || String(this.props.qaData.answer.docType) === '2') ?
                 <div className={ this.state.isFavorite === false ? 'otherItem favorite' : 'otherItem favorite active' } onClick={() => this.setFavorite(this.props.qaData.answer.docId)}>
                   <div className="img"></div>
                   <div className="text">收藏</div>

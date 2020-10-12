@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 问答内容
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-10 17:58:16
+ * @LastEditTime: 2020-10-12 17:35:49
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
@@ -16,6 +16,25 @@ import QuestionModel from './questionModel';
 import PersonServerAnswerModel from './personServerAnswerModel';
 import http from '@/utils/http';
 
+/**
+ * @Description: 空值判断函数
+ * @return {type}
+ * @Author: 蒋承志
+ */
+function checkVal(str: string) {
+  console.log('str.length :>> ', str.length);
+  let num = 0,
+  reg = /<p>(&nbsp;|&nbsp;\s+)+<\/p>|<p>(<br>)+<\/p>/g;
+  while (num < str.length && str != '')
+  {
+    num++;
+    let k = str.match(reg);
+    if (k) {
+      str = str.replace(k[0], '');
+    }
+  }
+  return str === '';
+}
 interface qaInfo{
   docId: string,
   docType: string
@@ -72,16 +91,32 @@ class QaContent extends Component<QaContentProps> {
   }
   async startSocket() {
     const num: number = new Date().getTime();
-    isSocket = new WebSocket(`ws://kf.im.sxw.com:9595/app/3331333731383036?client=sxw&identity=${num}`);
+    const loc: string = window.location.host;
+    let host: string = 'kf'
+    switch (loc) {
+      case 'kf.sw.com':
+        host =  'kf'
+        break;
+      case 'ysc.sw.com':
+        host =  'ysc'
+        break;
+      case 'zsc.sw.com':
+        host =  'zsc'
+        break;
+      case 'sw.noask-ai.com/':
+          host =  'kf'
+          break;
+      default:
+        break;
+    }
+    isSocket = new WebSocket(`ws://${host}.im.sxw.com:9595/app/3331333731383036?client=sxw&identity=${num}`);
     isSocket.onopen = () => {
       // Web Socket 已连接上，使用 send() 方法发送数据
-      console.log("数据发送中...");
     };
     isSocket.onmessage =  (evt: any) =>
     {
       const data = JSON.parse(evt.data)
       if (data.event === 'sxw-msg') {
-        console.log('data123 :>> ', data);
         const resData: any = {
           dialogId: String(new Date().getTime()),
           state: 2,
@@ -101,7 +136,6 @@ class QaContent extends Component<QaContentProps> {
     // };
     // 确认
     const res = await confirmSocket(num);
-    console.log('res :>> ', res);
   }
   inputSocket(data: string) {
     const resData: any = {
@@ -268,12 +302,17 @@ class QaContent extends Component<QaContentProps> {
     this.props.resetType();
   }
   submit() {
-    if (this.state.isPersonServer) {
-      this.inputSocket(editor.txt.text());
+    console.log('editor.txt.html() :>> ', editor.txt.html());
+    if (editor.txt.html()) {
+      if (this.state.isPersonServer) {
+        this.inputSocket(editor.txt.html());
+      } else {
+        this.getQaChatList(editor.txt.text());
+      }
+      editor.txt.html('');
     } else {
-      this.getQaChatList(editor.txt.text());
+      message.info('请输入有效的内容');
     }
-    editor.txt.html('');
   }
   async getRecord(dialogId: string){
     const data = {
@@ -392,7 +431,7 @@ class QaContent extends Component<QaContentProps> {
               <Button onClick={() => this.closeChat()}>关闭会话</Button>
             </div>
             <div className="submit">
-              <Button onClick={() => this.submit()}>发送</Button>
+              <Button type="primary" onClick={() => this.submit()}>发送</Button>
             </div>
           </div>
         </div>
