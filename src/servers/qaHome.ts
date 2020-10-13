@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-27 11:43:51
- * @LastEditTime: 2020-10-13 11:38:57
+ * @LastEditTime: 2020-10-13 16:58:12
  * @LastEditors: 蒋承志
  */
 
@@ -38,23 +38,25 @@ export const getQa = async (data: any) => {
 }
 // 获取常见问题
 export const getCommonQa = async (data: any) => {
+  console.log('datda0', data)
   return http('/portal/qa-new/recommend', {
     method: 'get',
-    data: data
+    params: data
   })
 }
 // 获取热门标签
 export const getLabel = async (data: any) => {
   return http('/portal/qa-new/hot/label', {
     method: 'get',
-    data: data
+    params: data
   })
 }
 // 获取相关案例
 export const getCase = async (data: any) => {
+  console.log('datda1', data)
   return http('/portal/qa-new/recommend/case', {
     method: 'get',
-    data: data
+    params: data
   })
 }
 // 标记是否已解决
@@ -68,7 +70,7 @@ export const setSolveType = async (data: any) => {
 export const getRecord = async (data: any) => {
   return http('/portal/qa-new/record', {
     method: 'get',
-    data: data
+    params: data
   })
 }
 // 收藏相关
@@ -76,7 +78,7 @@ export const getRecord = async (data: any) => {
 export const getFavoriteList = async (data: any) => {
   return http('/portal/uc/collection/list', {
     method: 'get',
-    data: data
+    params: data
   })
 }
 // 收藏
@@ -99,6 +101,6 @@ export const setFavoriteCancel = async (data: any) => {
 export const confirmSocket = async (data: any) => {
   return http(`/api/sxw/dialservice?identity=${data}&nickName={nickName}`, {
     method: 'get',
-    data: {}
+    params: {}
   })
 }
