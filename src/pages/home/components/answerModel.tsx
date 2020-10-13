@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-13 16:36:12
+ * @LastEditTime: 2020-10-13 16:37:57
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -149,7 +149,7 @@ class AnswerModel extends Component<UserModalProps> {
         <div className="infoContent">
           <div className="description" dangerouslySetInnerHTML={{__html: this.props.qaData.description}}></div>
           {
-            qaData.answer.docId && qaData.answer.docType !== 12 ?
+            qaData.answer.docId && qaData.answer.docType !== 11 ?
             <div className="answerName link" onClick={() => this.relationClick(qaData.answer)}>{qaData.answer.docName}</div>
             :
             <div className="answerName">{qaData.answer.docName}</div>
