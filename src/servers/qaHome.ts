@@ -2,14 +2,17 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-27 11:43:51
- * @LastEditTime: 2020-10-10 18:47:46
+ * @LastEditTime: 2020-10-13 11:38:57
  * @LastEditors: 蒋承志
  */
 
 import http from '@/utils/http';
 import { handleWebStorage } from '@/utils/base';
-const accessToken: string = handleWebStorage.getLocalData('access_token');
-const tokenType:  string = handleWebStorage.getLocalData('token_type');
+// const accessToken: string = handleWebStorage.getLocalData('access_token');
+// const tokenType:  string = handleWebStorage.getLocalData('token_type');
+const header: any = handleWebStorage.getLocalData('token_type') ? {
+  Authorization: handleWebStorage.getLocalData('token_type') + handleWebStorage.getLocalData('access_token')
+} : {}
 
 // 选择问题类别
 export const getQaType = async (data: any) => {
@@ -73,24 +76,23 @@ export const getRecord = async (data: any) => {
 export const getFavoriteList = async (data: any) => {
   return http('/portal/uc/collection/list', {
     method: 'get',
-    data: data,
-    headers: {
-      Authorization: handleWebStorage.getLocalData('token_type') + handleWebStorage.getLocalData('access_token')
-    }
+    data: data
   })
 }
 // 收藏
 export const setFavoriteConfilm = async (data: any) => {
-  return http('/portal/uc/collection/list', {
+  return http('/portal/uc/collection/collect', {
     method: 'post',
-    data: data
+    data: data,
+    requestType: 'form'
   })
 }
 // 取消收藏
 export const setFavoriteCancel = async (data: any) => {
-  return http('/portal/uc/collection/list', {
+  return http('/portal/uc/collection/uncollect', {
     method: 'post',
-    data: data
+    data: data,
+    requestType: 'form'
   })
 }
 // 确认连接

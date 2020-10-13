@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-12 20:00:08
+ * @LastEditTime: 2020-10-13 11:16:08
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -96,7 +96,44 @@ class AnswerModel extends Component<UserModalProps> {
   otherIink(link: string) {
     window.open(link, '_blank');
   }
-  blclLink(item: any) {
+  blclLink(val: any) {
+    if(this.props.loginState) {
+      let url = '/detail/lawsRegulations';
+      switch (String(val.docType)) {
+        case '1':
+          url = '/detail/manageStandard';
+          break;
+        case '2':
+          url = '/detail/formProve';
+          break;
+        case '3':
+          url = '/detail/lawsRegulations';
+          break;
+        case '4':
+          url = '/detail/policyExplain';
+          break;
+        case '5':
+          url = '/detail/ratepayingServeStandard';
+          break;
+        case '6':
+          url = '/detail/inspectStandard';
+          break;
+        case '7':
+          url = '/detail/fanLawsRegulations';
+          break;
+        case '8':
+          url = '/detail/referCase';
+          break;
+        case '9':
+          url = '/term/detail';
+          break;
+        default:
+          break;
+      }
+      window.open(`/#${url}?id=${val.id}&type=${val.docType}${String(val.docType) === '6' ? `&version=${val.docVersion}` : ''}`, '_blank');
+    } else {
+      this.props.confirmLogin();
+    }
   }
   selAnswerState(qaData: any) {
     if (qaData.state === 0) {

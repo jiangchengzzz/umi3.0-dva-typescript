@@ -2,11 +2,16 @@
  * @Author: 蒋承志
  * @Description: 封装的请求
  * @Date: 2020-09-21 11:16:42
- * @LastEditTime: 2020-10-12 20:37:59
+ * @LastEditTime: 2020-10-13 11:37:30
  * @LastEditors: 蒋承志
  */
 import { extend, RequestOptionsInit } from 'umi-request';
 import { notification } from 'antd';
+
+import { handleWebStorage } from '@/utils/base';
+const header: any = handleWebStorage.getLocalData('token_type') ? {
+  Authorization: handleWebStorage.getLocalData('token_type') + handleWebStorage.getLocalData('access_token')
+} : {}
 
 type Map = {
     [key: number]: string;
@@ -70,11 +75,7 @@ const http = extend({
 
 // request拦截器, 改变url 或 options.
 http.interceptors.request.use((url, options: RequestOptionsInit) => {
-  // if (options.method === 'get') {
-  //   options.params = JSON.stringify(options.params || options.data)
-  // }
-  // options.headers = Object.assign({}, options.headers, {"x-csrf-token":getCookie("csrfToken")})
-  options.headers = Object.assign({}, options.headers)
+  options.headers = Object.assign(header, options.headers)
   return {
     url,
     options,

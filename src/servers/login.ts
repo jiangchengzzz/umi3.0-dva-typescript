@@ -2,14 +2,15 @@
  * @Author: 蒋承志
  * @Description: file content
  * @Date: 2020-09-25 15:25:45
- * @LastEditTime: 2020-10-09 16:09:13
+ * @LastEditTime: 2020-10-13 11:39:15
  * @LastEditors: 蒋承志
  */
 import http from '@/utils/http';
 import { handleWebStorage } from '@/utils/base'
 
-const accessToken: string = handleWebStorage.getLocalData('access_token');
-const tokenType:  string = handleWebStorage.getLocalData('token_type');
+const header: any = handleWebStorage.getLocalData('token_type') ? {
+  Authorization: handleWebStorage.getLocalData('token_type') + handleWebStorage.getLocalData('access_token')
+} : {}
 
 export const getPhonecode = async (data: any) => {
   return http(`/auth/verificationcode/${data.phone}`, {
@@ -48,26 +49,17 @@ export const phoneLogin = async (data: any) => {
 }
 export const userInfo = async () => {
   return http('/auth/tenant/info', {
-    method: 'get',
-    headers: {
-      Authorization: handleWebStorage.getLocalData('token_type') + handleWebStorage.getLocalData('access_token')
-    }
+    method: 'get'
   })
 }
 export const userBaseInfo = async () => {
   return http('/portal/uc/user/base-info', {
-    method: 'get',
-    headers: {
-      Authorization: handleWebStorage.getLocalData('token_type') + handleWebStorage.getLocalData('access_token')
-    }
+    method: 'get'
   })
 }
 export const getPermission = async () => {
   return http('/portal/uc/user/portal/permission', {
-    method: 'post',
-    headers: {
-      Authorization: handleWebStorage.getLocalData('token_type') + handleWebStorage.getLocalData('access_token')
-    }
+    method: 'post'
   })
 }
 

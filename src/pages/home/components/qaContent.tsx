@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 问答内容
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-12 20:35:21
+ * @LastEditTime: 2020-10-13 11:29:34
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
@@ -332,7 +332,8 @@ class QaContent extends Component<QaContentProps> {
     })
   }
   render() {
-    const { labelList, qaList, recordList, havaRecord, psList } : any = this.state
+    const { labelList, qaList, recordList, havaRecord, psList } : any = this.state;
+    console.log('this.state.isPersonServer', this.state.isPersonServer)
     return (
       <div className="qaContent">
         <div className="qaInfo" ref={(el) => { this.qaBoxCon = el; }}>
