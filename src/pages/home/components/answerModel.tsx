@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-13 17:10:01
+ * @LastEditTime: 2020-10-13 17:30:08
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -165,7 +165,6 @@ class AnswerModel extends Component<UserModalProps> {
                         return (
                           <div key={i} className="formImg">
                             <Image
-                              // width={}
                               src={val}
                             />
                           </div>
@@ -182,7 +181,6 @@ class AnswerModel extends Component<UserModalProps> {
                   qaData.answer.flowImgPath &&
                   <div className="flowImg">
                     <Image
-                      // width={}
                       src={qaData.answer.flowImgPath}
                     />
                   </div>
