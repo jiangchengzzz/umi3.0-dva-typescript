@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-13 16:37:57
+ * @LastEditTime: 2020-10-13 17:10:01
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -88,7 +88,7 @@ class AnswerModel extends Component<UserModalProps> {
         default:
           break;
       }
-      window.open(`/#${url}?id=${val.id}&type=${val.docType}${val.docType === '6' ? `&version=${val.docVersion}` : ''}`, '_blank');
+      window.open(`/#${url}?id=${val.id || val.docId}&type=${val.docType}${val.docType === '6' ? `&version=${val.docVersion}` : ''}`, '_blank');
     } else {
       this.props.confirmLogin();
     }
