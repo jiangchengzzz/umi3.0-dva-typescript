@@ -2,20 +2,28 @@
  * @Author: 蒋承志
  * @Description: 封装的请求
  * @Date: 2020-09-21 11:16:42
- * @LastEditTime: 2020-10-13 11:37:30
+ * @LastEditTime: 2020-10-13 15:39:54
  * @LastEditors: 蒋承志
  */
 import { extend, RequestOptionsInit } from 'umi-request';
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 
 import { handleWebStorage } from '@/utils/base';
-const header: any = handleWebStorage.getLocalData('token_type') ? {
+let header: any = handleWebStorage.getLocalData('token_type') ? {
   Authorization: handleWebStorage.getLocalData('token_type') + handleWebStorage.getLocalData('access_token')
 } : {}
+
 
 type Map = {
     [key: number]: string;
 };
+
+/**
+ * @Description: 提示没有权限引导登录
+ * @return {type}
+ * @Author: 蒋承志
+ */
+
 
 const codeMessage : Map= {
   200: '服务器成功返回请求的数据。',
@@ -35,12 +43,6 @@ const codeMessage : Map= {
   504: '网关超时。',
 };
 
-// 获取cookie信息
-function getCookie(name: string) : string {
-  var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
-  if(arr=document.cookie.match(reg)) return unescape(arr[2]);
-  return '';
-}
 /**
  * 异常处理程序
  */
@@ -49,10 +51,12 @@ const errorHandler = (error: any)  => {
   if( response ) {
     const { status, url } = response
     if( status > 400 ) {
-      notification.error({
-        message: error.data.message ? error.data.message : error.data,
-        description: `${url}`,
-      });
+      if (status === 401) {
+        message.warning('您的登录已过期，若想继续获取很好的服务请重新登录');
+        handleWebStorage.removeLocalData('token_type');
+        handleWebStorage.removeLocalData('access_token');
+        window.location.reload();
+      }
     } else {
       notification.error({
         message: `Network Error!`,
@@ -75,6 +79,9 @@ const http = extend({
 
 // request拦截器, 改变url 或 options.
 http.interceptors.request.use((url, options: RequestOptionsInit) => {
+  header = handleWebStorage.getLocalData('token_type') ? {
+    Authorization: handleWebStorage.getLocalData('token_type') + handleWebStorage.getLocalData('access_token')
+  } : {}
   options.headers = Object.assign(header, options.headers)
   return {
     url,
@@ -108,11 +115,8 @@ http.interceptors.response.use(async (response: any) => {
     //   return false
     // }
     // return  data.data;
+  } else if (response.status === 401) {
   } else {
-    notification.error({
-      description: data.msg || '您的网络发生异常，无法连接服务器',
-      message: data.msg,
-    });
   }
   return  response;
 });

@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-13 11:16:08
+ * @LastEditTime: 2020-10-13 16:03:59
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -127,6 +127,8 @@ class AnswerModel extends Component<UserModalProps> {
         case '9':
           url = '/term/detail';
           break;
+        case '12':
+          url = '/detail/taxationGuide'
         default:
           break;
       }
@@ -146,7 +148,12 @@ class AnswerModel extends Component<UserModalProps> {
       return (
         <div className="infoContent">
           <div className="description" dangerouslySetInnerHTML={{__html: this.props.qaData.description}}></div>
-          <div className="answerName">{qaData.answer.docName}</div>
+          {
+            qaData.answer.docId && qaData.answer.docType !== 12 ?
+            <div className="answerName link" onClick={() => this.relationClick(qaData.answer)}>{qaData.answer.docName}</div>
+            :
+            <div className="answerName">{qaData.answer.docName}</div>
+          }
           <div className="answerContent">
             <div className={this.state.upload ? "answerContentBox upload": "answerContentBox"}>
               <div ref={this.conBox }>
