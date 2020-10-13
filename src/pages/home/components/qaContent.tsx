@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 问答内容
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-13 11:29:34
+ * @LastEditTime: 2020-10-13 19:14:40
  * @LastEditors: 蒋承志
  */
 import React, {Component} from 'react';
@@ -217,6 +217,7 @@ class QaContent extends Component<QaContentProps> {
         editorContent: editor.txt.html()
       })
     }
+    editor.customConfig.zIndex = 1000
     editor.customConfig.menus = [
       'emoticon',  // 表情
       // 'image',  // 插入图片

@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-13 17:30:08
+ * @LastEditTime: 2020-10-13 19:29:29
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -55,6 +55,8 @@ class AnswerModel extends Component<UserModalProps> {
     this.props.getQa(label.nodeName, label);
   }
   relationClick(val: any) {
+    console.log('val :>> ', val);
+
     if(this.props.loginState) {
       let url = '/detail/lawsRegulations';
       switch (String(val.docType)) {
@@ -85,6 +87,8 @@ class AnswerModel extends Component<UserModalProps> {
         case '9':
           url = '/term/detail';
           break;
+        case '12':
+          url = '/detail/taxationGuide'
         default:
           break;
       }
@@ -127,8 +131,6 @@ class AnswerModel extends Component<UserModalProps> {
         case '9':
           url = '/term/detail';
           break;
-        case '12':
-          url = '/detail/taxationGuide'
         default:
           break;
       }
@@ -197,7 +199,7 @@ class AnswerModel extends Component<UserModalProps> {
                           qaData.answer.blclxxList.map((v: any, i: number) => {
                             return (
                               v.id ?
-                              <div key={i} className="blclLink blcItem" onClick={() => this.blclLink(v)}>{v.clMc}</div>
+                              <div key={i} className="blclLink blcItem" onClick={() => this.relationClick(v)}>{v.clMc}</div>
                               :
                               <div key={i} className="blcItem">{v.clMc}</div>
                             )
@@ -287,6 +289,26 @@ class AnswerModel extends Component<UserModalProps> {
           </div>
         </div>
       )
+    } else if (qaData.state === 5) {
+      return (
+        <div className="infoContent">
+          <div className="description" dangerouslySetInnerHTML={{__html: qaData.description}}></div>
+          <div className="infoList">
+            {
+              qaData.answer.taxBureauList.map((v: any) => {
+                return (
+                  <div className="infoItem">
+                    <div className="item"><span className="name">全称：</span><span className="value">{v.name}</span></div>
+                    <div className="item"><span className="name">电话：</span><span className="value">{v.landlineNumber}</span></div>
+                    <div className="item"><span className="name">归属：</span><span className="value">{v.area}</span></div>
+                    <div className="item"><span className="name">地址：</span><span className="value">{v.address}</span></div>
+                  </div>
+                )
+              })
+            }
+          </div>
+        </div>
+      )
     } else if (qaData.state === 99) {
       return (
         <div className="infoContent">
@@ -368,7 +390,7 @@ class AnswerModel extends Component<UserModalProps> {
             </div>
           </div>
           {
-            qaData.state === 99 ||  qaData.state === 0 || qaData.state === 2 || qaData.state === 3 ?
+            qaData.state === 99 || qaData.state === 0 || qaData.state === 2 || qaData.state === 3 || qaData.state === 5 ?
             null
             :
             <div className="otherHandle">
