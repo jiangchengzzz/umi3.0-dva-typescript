@@ -2,13 +2,13 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-13 16:03:59
+ * @LastEditTime: 2020-10-13 16:24:30
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
 import './component.less';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import { Button, message } from 'antd';
+import { Button, message, Image } from 'antd';
 import { setSolveType } from '@/servers/qaHome';
 import { setFavoriteConfilm, setFavoriteCancel } from '@/servers/qaHome';
 
@@ -164,8 +164,10 @@ class AnswerModel extends Component<UserModalProps> {
                       qaData.answer.formImage.map((val: any, i: number) => {
                         return (
                           <div key={i} className="formImg">
-                            <img src={val} alt=""/>
-                            {/* <img src={require('../../../assets/images/formImg.png')} alt=""/> */}
+                            <Image
+                              // width={}
+                              src={val}
+                            />
                           </div>
                         )
                       })
@@ -179,7 +181,10 @@ class AnswerModel extends Component<UserModalProps> {
                 {
                   qaData.answer.flowImgPath &&
                   <div className="flowImg">
-                    <img src={qaData.answer.flowImgPath} alt=""/>
+                    <Image
+                      // width={}
+                      src={qaData.answer.flowImgPath}
+                    />
                   </div>
                 }
                 <div className="contentAll">
