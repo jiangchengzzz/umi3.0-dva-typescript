@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-13 19:29:29
+ * @LastEditTime: 2020-10-13 19:50:33
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -298,10 +298,22 @@ class AnswerModel extends Component<UserModalProps> {
               qaData.answer.taxBureauList.map((v: any) => {
                 return (
                   <div className="infoItem">
-                    <div className="item"><span className="name">全称：</span><span className="value">{v.name}</span></div>
-                    <div className="item"><span className="name">电话：</span><span className="value">{v.landlineNumber}</span></div>
-                    <div className="item"><span className="name">归属：</span><span className="value">{v.area}</span></div>
-                    <div className="item"><span className="name">地址：</span><span className="value">{v.address}</span></div>
+                    {
+                      v.name &&
+                      <div className="item"><span className="name">全称：</span><span className="value">{v.name}</span></div>
+                    }
+                    {
+                      v.landlineNumber &&
+                      <div className="item"><span className="name">电话：</span><span className="value">{v.landlineNumber}</span></div>
+                    }
+                    {
+                      v.area &&
+                      <div className="item"><span className="name">归属：</span><span className="value">{v.area}</span></div>
+                    }
+                    {
+                      v.area &&
+                      <div className="item"><span className="name">地址：</span><span className="value">{v.address}</span></div>
+                    }
                   </div>
                 )
               })
