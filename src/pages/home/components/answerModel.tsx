@@ -2,7 +2,7 @@
  * @Author: 蒋承志
  * @Description: 我的收藏问题
  * @Date: 2020-09-18 11:59:31
- * @LastEditTime: 2020-10-13 16:24:30
+ * @LastEditTime: 2020-10-13 16:32:10
  * @LastEditors: 蒋承志
  */
 import React, { Component, FC } from 'react';
@@ -228,33 +228,36 @@ class AnswerModel extends Component<UserModalProps> {
               </div>
             }
           </div>
-          <div className="relationInfo">
-            <div className="title">
-              相关内容：
-            </div>
-            <div className="relationList">
-              {
-                qaData.answer.relations.map((v: any, i: number) => {
-                  return (
-                    <div className="docTypeItem" key={i}>
-                      <div className="docType">{v.typeName}：</div>
-                      <div className="docNameLIst">
-                        {
-                          v.content.map((val: any, i: number) => {
-                            if (i < 2) {
-                              return (
-                                <div key={val.id} onClick={() => this.relationClick(val)} className="docItem">{ `${val.dispatchUnit} ${val.dirNum} ${val.name} ${val.writNo ? `（${val.writNo}）`: ''}` }</div>
-                              )
-                            }
-                          })
-                        }
+          {
+            qaData.answer.relations.length > 0 &&
+            <div className="relationInfo">
+              <div className="title">
+                相关内容：
+              </div>
+              <div className="relationList">
+                {
+                  qaData.answer.relations.map((v: any, i: number) => {
+                    return (
+                      <div className="docTypeItem" key={i}>
+                        <div className="docType">{v.typeName}：</div>
+                        <div className="docNameLIst">
+                          {
+                            v.content.map((val: any, i: number) => {
+                              if (i < 2) {
+                                return (
+                                  <div key={val.id} onClick={() => this.relationClick(val)} className="docItem">{ `${val.dispatchUnit} ${val.dirNum} ${val.name} ${val.writNo ? `（${val.writNo}）`: ''}` }</div>
+                                )
+                              }
+                            })
+                          }
+                        </div>
                       </div>
-                    </div>
-                  )
-                })
-              }
+                    )
+                  })
+                }
+              </div>
             </div>
-          </div>
+          }
         </div>
       )
     } else if (qaData.state === 2) {
@@ -290,22 +293,25 @@ class AnswerModel extends Component<UserModalProps> {
       return (
         <div className="infoContent">
           <div className="description" dangerouslySetInnerHTML={{__html: qaData.description}}></div>
-          <div className="relationInfo">
-            <div className="title">
-              大家都在问：
+          {
+            qaData.recommendedDocs.length > 0 &&
+            <div className="relationInfo">
+              <div className="title">
+                大家都在问：
+              </div>
+              <div className="commonList">
+                {
+                  qaData.recommendedDocs.map((v: any) => {
+                    return (
+                      <div className="qaItem" key={v.docId} onClick={() => this.props.qaDetail(v)}>
+                      {v.docName}
+                      </div>
+                    )
+                  })
+                }
+              </div>
             </div>
-            <div className="commonList">
-              {
-                qaData.recommendedDocs.map((v: any) => {
-                  return (
-                    <div className="qaItem" key={v.docId} onClick={() => this.props.qaDetail(v)}>
-                     {v.docName}
-                    </div>
-                  )
-                })
-              }
-            </div>
-          </div>
+          }
           {
             !this.props.loginState &&
             <div className="guideLogin">
